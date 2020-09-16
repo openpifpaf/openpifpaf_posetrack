@@ -1,0 +1,17 @@
+# system
+.vscode
+.DS_Store
+
+# data
+data-*
+outputs/
+docs-private/
+shared/
+
+# Python
+.ipynb_checkpoints/
+*.pyc
+venv*/
+*.egg-info/
+dist/
+__pycache__/
