@@ -187,10 +187,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         cls.eval_orientation_invariant = args.crowdpose_eval_orientation_invariant
         cls.eval_extended_scale = args.crowdpose_eval_extended_scale
 
-        if args.crowdpose_eval_test \
-           and not args.write_predictions and not args.debug:
-            raise Exception('have to use --write-predictions for this dataset')
-
     def _preprocess(self):
         encoders = (openpifpaf.encoder.Cif(self.head_metas[0]),
                     openpifpaf.encoder.Caf(self.head_metas[1]))
