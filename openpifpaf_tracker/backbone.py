@@ -1,0 +1,107 @@
+from collections import defaultdict
+import logging
+
+import openpifpaf
+import torch
+
+LOG = logging.getLogger(__name__)
+
+
+class RunningCache(torch.nn.Module):
+    def __init__(self, cached_items):
+        super().__init__()
+
+        self.cached_items = cached_items
+        self.duration = abs(min(cached_items)) + 1
+        self.cache = [None for _ in range(self.duration)]
+        self.index = 0
+
+        LOG.debug('running cache of length %d', len(self.cache))
+
+    def incr(self):
+        self.index = (self.index + 1) % self.duration
+
+    def get_index(self, index):
+        while index < 0:
+            index += self.duration
+        while index >= self.duration:
+            index -= self.duration
+        LOG.debug('retrieving cache at index %d', index)
+
+        v = self.cache[index]
+        if v is not None:
+            v = v.detach()
+        return v
+
+    def get(self):
+        return [self.get_index(i + self.index) for i in self.cached_items]
+
+    def set_next(self, data):
+        self.incr()
+        self.cache[self.index] = data
+        LOG.debug('set new data at index %d', self.index)
+        return self
+
+    def forward(self, *args):
+        LOG.debug('----------- running cache --------------')
+        x = args[0]
+
+        o = []
+        for x_i in x:
+            o += self.set_next(x_i).get()
+
+        if any(oo is None for oo in o):
+            o = [oo if oo is not None else o[0] for oo in o]
+
+        # drop images of the wrong size (determine size by majority vote)
+        if len(o) >= 2:
+            image_sizes = [tuple(oo.shape[-2:]) for oo in o]
+            image_sizes[-1] = (1, 1)
+            # print(image_sizes)
+            if not all(ims == image_sizes[0] for ims in image_sizes[1:]):
+                freq = defaultdict(int)
+                for ims in image_sizes:
+                    freq[ims] += 1
+                max_freq = max(freq.values())
+                ref_image_size = next(iter(ims for ims, f in freq.items() if f == max_freq))
+
+                for i, ims in enumerate(image_sizes):
+                    if ims == ref_image_size:
+                        continue
+                    for s in range(1, len(image_sizes)):
+                        target_i = (i + s) % len(image_sizes)
+                        if image_sizes[target_i] == ref_image_size:
+                            break
+                    # print('replacing {} with {}'.format(i, target_i))
+                    o[i] = o[target_i]
+
+        return torch.stack(o)
+
+
+class TBackbone(openpifpaf.network.BaseNetwork):
+    cached_items = [0, 1]
+
+    def __init__(self, single_image_backbone):
+        super().__init__(
+            't' + single_image_backbone.name,
+            stride=single_image_backbone.stride,
+            out_features=single_image_backbone.out_features,
+        )
+        self.single_image_backbone = single_image_backbone
+        self.running_cache = RunningCache(self.cached_items)
+
+    def reset(self):
+        del self.running_cache
+        self.running_cache = RunningCache(self.cached_items)
+
+    def forward(self, *args):
+        x = args[0]
+
+        # backbone
+        x = self.single_image_backbone(x)
+
+        # feature cache
+        if not self.training:
+            x = self.running_cache(x)
+
+        return x
