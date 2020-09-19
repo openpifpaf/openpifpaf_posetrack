@@ -14,6 +14,7 @@ def register():
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
 
+    # TODO resolve conflicting names: TBase TBackbone
     openpifpaf.HEAD_FACTORIES[headmeta.TBaseCif] = heads.TBaseSingleImage
     openpifpaf.HEAD_FACTORIES[headmeta.TBaseCaf] = heads.TBaseSingleImage
     openpifpaf.HEAD_FACTORIES[headmeta.Tcaf] = heads.Tcaf
