@@ -10,7 +10,7 @@ class TBaseSingleImage(openpifpaf.network.HeadNetwork):
     Evaluation with full tracking pose: keep all.
     """
     forward_tracking_pose = True
-    tracking_pose_length = 4
+    tracking_pose_length = 2
 
     def __init__(self, meta, in_features):
         super().__init__(meta, in_features)
@@ -34,7 +34,7 @@ class Tcaf(openpifpaf.network.HeadNetwork):
     Evaluation with forward tracking pose: only keep image 0.
     Evaluation with full tracking pose: keep all.
     """
-    tracking_pose_length = 4
+    tracking_pose_length = 2
     reduced_features = 512
 
     def __init__(self, meta, in_features):
@@ -52,6 +52,13 @@ class Tcaf(openpifpaf.network.HeadNetwork):
 
     def forward(self, *args):
         x = args[0]
+
+        # Batches that are not intended for tracking loss might have an
+        # odd number of images (or only 1 image).
+        # In that case, simply do not execute this head as the result should
+        # never be used.
+        if len(x) % 2 == 1:
+            return None
 
         if self.feature_reduction:
             x = self.feature_reduction(x)
