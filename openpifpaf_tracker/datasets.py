@@ -98,7 +98,8 @@ class Posetrack2018(torch.utils.data.Dataset):
         metas = []
 
         for group_i, data in enumerate(group):
-            with open(os.path.join(self.data_root, data['image']['file_name']), 'rb') as f:
+            local_file_path = os.path.join(self.data_root, data['image']['file_name'])
+            with open(local_file_path, 'rb') as f:
                 image = PIL.Image.open(f).convert('RGB')
                 images.append(image)
 
@@ -108,6 +109,7 @@ class Posetrack2018(torch.utils.data.Dataset):
                 'dataset_index': index,
                 'image_id': data['image']['frame_id'],
                 'file_name': data['image']['file_name'],
+                'local_file_path': local_file_path,
                 'annotation_file': data['annotation_file'],
                 'group_i': group_i,
             })
