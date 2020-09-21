@@ -6,4 +6,4 @@ from .encoders import Encoders
 from .impute import AddCrowdForIncompleteHead
 from .normalize import NormalizeCocoToMpii, NormalizeMOT, NormalizePosetrack
 from .scale import ScaleMix
-from .single_image import SingleImageTransform
+from .single_image import SingleImage, Ungroup

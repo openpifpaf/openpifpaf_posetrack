@@ -6,7 +6,7 @@ import torch
 import openpifpaf
 
 from . import collate, datasets, encoder, headmeta, transforms
-from .transforms import SingleImageTransform as S
+from .transforms import SingleImage as S
 
 
 KEYPOINTS = [
@@ -322,7 +322,8 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             ], salt=3)
 
         return [
-            openpifpaf.transforms.NormalizeAnnotations(),
+            transforms.Ungroup(),
+            transforms.NormalizePosetrack(),
             rescale_t,
             padding_t,
             orientation_t,
@@ -351,7 +352,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         return torch.utils.data.DataLoader(
             eval_data, batch_size=self.batch_size, shuffle=False,
             pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=False,
-            collate_fn=collate.collate_tracking_images_anns_meta)
+            collate_fn=openpifpaf.datasets.collate_images_anns_meta)
 
     def metrics(self):
         return []

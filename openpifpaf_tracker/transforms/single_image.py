@@ -6,7 +6,7 @@ import torch
 import openpifpaf
 
 
-class SingleImageTransform(openpifpaf.transforms.Preprocess):
+class SingleImage(openpifpaf.transforms.Preprocess):
     def __init__(self, single_image_op):
         self.single_image_op = single_image_op
 
@@ -32,3 +32,14 @@ class SingleImageTransform(openpifpaf.transforms.Preprocess):
             np.random.set_state(np_rnd_state)
 
         return out_images, out_anns, out_meta
+
+
+class Ungroup(openpifpaf.transforms.Preprocess):
+    """During evaluation, tracking datasets produce image groups of length
+    one. Ungroup them so that it looks like any other single-image dataset.
+    """
+    def __call__(self, image_group, anns_group, meta_group):
+        assert len(image_group) == 1
+        assert len(anns_group) == 1
+        assert len(meta_group) == 1
+        return image_group[0], anns_group[0], meta_group[0]
