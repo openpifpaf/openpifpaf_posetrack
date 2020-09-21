@@ -22,5 +22,7 @@ def register():
     openpifpaf.BASE_TYPES.add(TBackbone)
     openpifpaf.BASE_FACTORIES['tshufflenetv2k16'] = lambda: TBackbone(
         openpifpaf.network.factory(checkpoint='shufflenetv2k16')[0].base_net)
+    openpifpaf.BASE_FACTORIES['tshufflenetv2k30'] = lambda: TBackbone(
+        openpifpaf.network.factory(checkpoint='shufflenetv2k30')[0].base_net)
     openpifpaf.BASE_FACTORIES['tresnet50'] = lambda: TBackbone(
         openpifpaf.network.factory(checkpoint='resnet50')[0].base_net)
