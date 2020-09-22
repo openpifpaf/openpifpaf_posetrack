@@ -1,3 +1,4 @@
+import argparse
 import logging
 import time
 
@@ -7,6 +8,7 @@ import scipy.optimize
 
 from ... import headmeta
 from ..euclidean import Euclidean
+from ..oks import Oks
 from ..track_annotation import TrackAnnotation
 from .track_base import TrackBase
 
@@ -25,8 +27,20 @@ class PoseSimilarity(TrackBase):
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf([cif_meta], [caf_meta])
 
     @classmethod
-    def configure(cls, args):
-        cls.distance_function = Euclidean()
+    def cli(cls, parser: argparse.ArgumentParser):
+        group = parser.add_argument_group('PoseSimilarity')
+        group.add_argument('--posesimilarity-distance',
+                           default='euclidean', choices=('euclidean', 'oks'))
+        group.add_argument('--posesimilarity-oks-inflate', default=Oks.inflate, type=float)
+
+    @classmethod
+    def configure(cls, args: argparse.Namespace):
+        if args.posesimilarity_distance == 'euclidean':
+            cls.distance_function = Euclidean()
+        elif args.posesimilarity_distance == 'oks':
+            cls.distance_function = Oks()
+
+        Oks.inflate = args.posesimilarity_oks_inflate
 
     @classmethod
     def factory(cls, head_metas):
@@ -47,6 +61,8 @@ class PoseSimilarity(TrackBase):
             1 if kp not in ('left_ear', 'right_ear') else 0
             for kp in self.cif_meta.keypoints
         ]
+        # set sigmas
+        self.distance_function.sigmas = np.asarray(self.cif_meta.sigmas)
 
         self.frame_number += 1
         self.prune_active(self.frame_number)
