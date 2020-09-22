@@ -1,6 +1,6 @@
 import openpifpaf
 
-from . import headmeta, heads
+from . import decoder, headmeta, heads
 from .backbone import TBackbone
 from .crowdpose import CrowdPose
 from .posetrack2018 import Posetrack2018
@@ -26,3 +26,5 @@ def register():
         openpifpaf.network.factory(checkpoint='shufflenetv2k30')[0].base_net)
     openpifpaf.BASE_FACTORIES['tresnet50'] = lambda: TBackbone(
         openpifpaf.network.factory(checkpoint='resnet50')[0].base_net)
+
+    openpifpaf.DECODERS.add(decoder.PoseSimilarity)
