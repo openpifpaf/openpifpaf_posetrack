@@ -80,7 +80,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
     eval_annotations = val_annotations
     image_dir = 'data-crowdpose/images/'
 
-    n_images = None
     square_edge = 385
     extended_scale = False
     orientation_invariant = 0.0
@@ -122,9 +121,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         group.add_argument('--crowdpose-image-dir',
                            default=cls.image_dir)
 
-        group.add_argument('--crowdpose-n-images',
-                           default=cls.n_images, type=int,
-                           help='number of images to sample')
         group.add_argument('--crowdpose-square-edge',
                            default=cls.square_edge, type=int,
                            help='square edge of input images')
@@ -171,7 +167,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         cls.val_annotations = args.crowdpose_val_annotations
         cls.image_dir = args.crowdpose_image_dir
 
-        cls.n_images = args.crowdpose_n_images
         cls.square_edge = args.crowdpose_square_edge
         cls.extended_scale = args.crowdpose_extended_scale
         cls.orientation_invariant = args.crowdpose_orientation_invariant
@@ -233,7 +228,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             image_dir=self.image_dir,
             ann_file=self.train_annotations,
             preprocess=self._preprocess(),
-            n_images=self.n_images,
             annotation_filter=True,
             min_kp_anns=self.min_kp_anns,
             category_ids=[1],
@@ -248,7 +242,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             image_dir=self.image_dir,
             ann_file=self.val_annotations,
             preprocess=self._preprocess(),
-            n_images=self.n_images,
             annotation_filter=True,
             min_kp_anns=self.min_kp_anns,
             category_ids=[1],
@@ -313,7 +306,6 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             image_dir=self.image_dir,
             ann_file=self.eval_annotations,
             preprocess=self._eval_preprocess(),
-            n_images=self.n_images,
             annotation_filter=(self.eval_annotations == self.val_annotations),
             min_kp_anns=self.min_kp_anns if self.eval_annotations == self.val_annotations else 0,
             category_ids=[1],
