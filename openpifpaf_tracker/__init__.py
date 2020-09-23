@@ -28,3 +28,4 @@ def register():
         openpifpaf.network.factory(checkpoint='resnet50')[0].base_net)
 
     openpifpaf.DECODERS.add(decoder.PoseSimilarity)
+    openpifpaf.DECODERS.add(decoder.TrackingPose)

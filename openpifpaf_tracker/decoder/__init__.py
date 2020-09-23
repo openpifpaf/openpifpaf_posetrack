@@ -3,3 +3,4 @@
 from .track_annotation import TrackAnnotation
 from .generator.pose_similarity import PoseSimilarity
 from .generator.track_base import TrackBase
+from .generator.tracking_pose import TrackingPose
