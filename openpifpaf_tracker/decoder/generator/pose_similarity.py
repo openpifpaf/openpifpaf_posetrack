@@ -18,11 +18,10 @@ LOG = logging.getLogger(__name__)
 class PoseSimilarity(TrackBase):
     distance_function = None
 
-    def __init__(self, cif_meta, caf_meta, tcaf_meta, *, pose_generator=None):
+    def __init__(self, cif_meta, caf_meta, *, pose_generator=None):
         super().__init__()
         self.cif_meta = cif_meta
         self.caf_meta = caf_meta
-        self.tcaf_meta = tcaf_meta
 
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf([cif_meta], [caf_meta])
 
@@ -44,15 +43,14 @@ class PoseSimilarity(TrackBase):
 
     @classmethod
     def factory(cls, head_metas):
-        if len(head_metas) < 4:
+        if len(head_metas) < 2:
             return []
         return [
-            cls(cif_meta, caf_meta, tcaf_meta)
-            for cif_meta, caf_meta, tcaf_meta
-            in zip(head_metas, head_metas[1:], head_metas[3:])
+            cls(cif_meta, caf_meta)
+            for cif_meta, caf_meta
+            in zip(head_metas, head_metas[1:])
             if (isinstance(cif_meta, headmeta.TBaseCif)
-                and isinstance(caf_meta, headmeta.TBaseCaf)
-                and isinstance(tcaf_meta, headmeta.Tcaf))
+                and isinstance(caf_meta, headmeta.TBaseCaf))
         ]
 
     def __call__(self, fields, *, initial_annotations=None):
