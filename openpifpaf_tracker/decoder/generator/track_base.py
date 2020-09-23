@@ -7,7 +7,7 @@ from ..track_annotation import TrackAnnotation
 
 
 class TrackBase(openpifpaf.decoder.Generator):
-    single_pose_threshold = 0.4
+    single_pose_threshold = 0.3
     multi_pose_threshold = 0.2
     multi_pose_n = 3
     minimum_threshold = 0.1
