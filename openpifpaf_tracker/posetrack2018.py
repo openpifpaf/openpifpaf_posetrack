@@ -124,8 +124,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     eval_annotations = val_annotations
     data_root = 'data-posetrack2018'
 
-    n_images = None
-    square_edge = 385
+    square_edge = 513
     augmentation = True
     rescale_images = 1.0
     upsample_stride = 1
@@ -176,12 +175,11 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
                            default=cls.train_annotations)
         group.add_argument('--posetrack2018-val-annotations',
                            default=cls.val_annotations)
+        group.add_argument('--posetrack2018-eval-annotations',
+                           default=cls.eval_annotations)
         group.add_argument('--posetrack2018-data-root',
                            default=cls.data_root)
 
-        group.add_argument('--posetrack2018-n-images',
-                           default=cls.n_images, type=int,
-                           help='number of images to sample')
         group.add_argument('--posetrack2018-square-edge',
                            default=cls.square_edge, type=int,
                            help='square edge of input images')
@@ -215,9 +213,9 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         # posetrack2018 specific
         cls.train_annotations = args.posetrack2018_train_annotations
         cls.val_annotations = args.posetrack2018_val_annotations
+        cls.eval_annotations = args.posetrack2018_eval_annotations
         cls.data_root = args.posetrack2018_data_root
 
-        cls.n_images = args.posetrack2018_n_images
         cls.square_edge = args.posetrack2018_square_edge
         cls.augmentation = args.posetrack2018_augmentation
         cls.rescale_images = args.posetrack2018_rescale_images
