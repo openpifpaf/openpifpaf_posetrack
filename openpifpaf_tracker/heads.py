@@ -7,7 +7,7 @@ class TBaseSingleImage(openpifpaf.network.HeadNetwork):
 
     Training: only apply loss to image 0 of an image pair of image 0 and 1.
     Evaluation with forward tracking pose: only keep image 0.
-    Evaluation with full tracking pose: keep all.
+    Evaluation with full tracking pose: keep all but stack group along feature dim.
     """
     forward_tracking_pose = True
     tracking_pose_length = 2
@@ -24,7 +24,16 @@ class TBaseSingleImage(openpifpaf.network.HeadNetwork):
         elif self.forward_tracking_pose:
             x = x[::self.tracking_pose_length]
 
-        return self.head(x)
+        x = self.head(x)
+
+        if not self.training and not self.forward_tracking_pose:
+            # full tracking pose eval
+            # TODO: stack batch dimension in feature dimension and adjust
+            # meta information (make it a property to dynamically return
+            # a different meta for evaluation)
+            raise NotImplementedError
+
+        return x
 
 
 class Tcaf(openpifpaf.network.HeadNetwork):
@@ -74,4 +83,11 @@ class Tcaf(openpifpaf.network.HeadNetwork):
         x_shape = x.size()
         x = torch.reshape(x, [x_shape[0] * x_shape[1]] + list(x_shape[2:]))
 
-        return self.head(x)
+        x = self.head(x)
+
+        if self.tracking_pose_length != 2:
+            # TODO need to stack group from batch dim in feature dim and adjust
+            # meta info
+            raise NotImplementedError
+
+        return x
