@@ -21,12 +21,11 @@ class TrackingPose(TrackBase):
         self.caf_meta = caf_meta
         self.tcaf_meta = tcaf_meta
 
-        self.n_keypoints = len(self.cif_meta.keypoints)
-        tracking_keypoints = self.cif_meta.keypoints * len(self.cache_group)
+        self.n_keypoints = len(cif_meta.keypoints)
+        tracking_keypoints = cif_meta.keypoints * len(self.cache_group)
         tracking_sigmas = cif_meta.sigmas * len(self.cache_group)
         tracking_skeleton = (
             self.caf_meta.skeleton
-            #  * len(self.cache_group)
             + [
                 (keypoint_i + 1, keypoint_i + 1 + frame_i * self.n_keypoints)
                 for frame_i in range(1, len(self.cache_group))
@@ -182,10 +181,10 @@ class TrackingPose(TrackBase):
         # pruning lost tracks
         self.active = [t for t in self.active if self.track_is_viable(t, self.frame_number)]
 
-        LOG.info('active tracks = %d, good = %d',
+        LOG.info('active tracks = %d, good = %d, track ids = %s',
                  len(self.active),
-                 len([t for t in self.active if self.track_is_good(t, self.frame_number)]))
-        LOG.info('track ids = %s', [t.id_ for t in self.active])
+                 len([t for t in self.active if self.track_is_good(t, self.frame_number)]),
+                 [t.id_ for t in self.active])
         # if self.track_visualizer or self.track_ann_visualizer:
         #     good_ids = set(t.id_ for t in self.active if self.track_is_good(t, self.frame_number))
         #     good_tracking_anns = [t for t in tracking_annotations
