@@ -29,5 +29,9 @@ class Tcaf(openpifpaf.headmeta.Base):
     vector_offsets = [True, True]
 
     @property
+    def skeleton(self):
+        return [(i + 1, i + 1) for i, _ in enumerate(self.keypoints)]
+
+    @property
     def n_fields(self):
         return len(self.keypoints)
