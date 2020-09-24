@@ -25,13 +25,11 @@ class Tcaf:
     aspect_ratio: ClassVar[float] = 0.0
     padding: ClassVar[int] = 10
 
-    tracking_encoder = True  # TODO remove
-
     def __call__(self, images, all_anns, metas):
         return TcafGenerator(self)(images, all_anns, metas)
 
 
-class TcafGenerator(object):
+class TcafGenerator:
     def __init__(self, config: Tcaf):
         self.config = config
 
@@ -55,7 +53,8 @@ class TcafGenerator(object):
         width_height_original = images[0].shape[2:0:-1]
 
         keypoint_sets = self.rescaler.keypoint_sets(all_anns[0], all_anns[1])
-        bg_mask = self.rescaler.bg_mask(all_anns[0], all_anns[1], width_height_original)  # TODO add crowd margin
+        bg_mask = self.rescaler.bg_mask(
+            all_anns[0], all_anns[1], width_height_original)  # TODO add crowd margin
         valid_area = self.rescaler.valid_area(metas[0])
         LOG.debug('valid area: %s, kpsets = %d, tpaf min size = %d',
                   valid_area, len(keypoint_sets), self.config.min_size)

@@ -1,4 +1,4 @@
-class SingleImage(object):
+class SingleImage:
     def __init__(self, wrapped):
         self.wrapped = wrapped
 
