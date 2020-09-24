@@ -56,8 +56,6 @@ class RunningCache(torch.nn.Module):
         # drop images of the wrong size (determine size by majority vote)
         if len(o) >= 2:
             image_sizes = [tuple(oo.shape[-2:]) for oo in o]
-            image_sizes[-1] = (1, 1)
-            # print(image_sizes)
             if not all(ims == image_sizes[0] for ims in image_sizes[1:]):
                 freq = defaultdict(int)
                 for ims in image_sizes:
@@ -72,14 +70,17 @@ class RunningCache(torch.nn.Module):
                         target_i = (i + s) % len(image_sizes)
                         if image_sizes[target_i] == ref_image_size:
                             break
-                    # print('replacing {} with {}'.format(i, target_i))
+                    LOG.warning('replacing %d (%s) with %d (%s) for ref %s',
+                                i, ims,
+                                target_i, image_sizes[target_i],
+                                ref_image_size)
                     o[i] = o[target_i]
 
         return torch.stack(o)
 
 
 class TBackbone(openpifpaf.network.BaseNetwork):
-    cached_items = [0, 1]
+    cached_items = [0, -1]
 
     def __init__(self, single_image_backbone):
         super().__init__(
