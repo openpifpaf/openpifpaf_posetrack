@@ -3,7 +3,6 @@ import logging
 import os
 import random
 
-import numpy as np
 import PIL
 import pysparkling
 import torch
