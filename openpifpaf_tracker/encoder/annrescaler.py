@@ -26,8 +26,8 @@ class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
                 bb[2:] += bb[:2]  # convert width and height to x2 and y2
                 left = np.clip(int(bb[0]), 0, mask.shape[1] - 1)
                 top = np.clip(int(bb[1]), 0, mask.shape[0] - 1)
-                right = np.clip(int(np.ceil(bb[2])), left + 1, mask.shape[1])
-                bottom = np.clip(int(np.ceil(bb[3])), top + 1, mask.shape[0])
+                right = np.clip(int(np.ceil(bb[2])) + 1, left + 1, mask.shape[1])
+                bottom = np.clip(int(np.ceil(bb[3])) + 1, top + 1, mask.shape[0])
                 crowd_bbox[0] = min(crowd_bbox[0], left)
                 crowd_bbox[1] = min(crowd_bbox[1], top)
                 crowd_bbox[2] = max(crowd_bbox[2], right)
