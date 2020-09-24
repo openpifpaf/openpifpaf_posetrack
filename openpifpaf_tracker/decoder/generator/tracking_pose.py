@@ -184,7 +184,8 @@ class TrackingPose(TrackBase):
         LOG.info('active tracks = %d, good = %d, track ids = %s',
                  len(self.active),
                  len([t for t in self.active if self.track_is_good(t, self.frame_number)]),
-                 [t.id_ for t in self.active])
+                 [self.simplified_track_id_map.get(t.id_, t.id_)
+                  for t in self.active])
         # if self.track_visualizer or self.track_ann_visualizer:
         #     good_ids = set(t.id_ for t in self.active if self.track_is_good(t, self.frame_number))
         #     good_tracking_anns = [t for t in tracking_annotations
