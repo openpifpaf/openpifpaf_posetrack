@@ -49,13 +49,9 @@ class Tcaf(openpifpaf.network.HeadNetwork):
     def __init__(self, meta, in_features):
         super().__init__(meta, in_features)
         self.feature_reduction = torch.nn.Sequential(
-            torch.nn.Conv2d(
-                in_features,
-                self.reduced_features,
-                kernel_size=1, bias=True,
-                # groups=feature_reduction[1],
-            ),
-            torch.nn.ReLU(),
+            torch.nn.Conv2d(in_features, self.reduced_features,
+                            kernel_size=1, bias=True),
+            torch.nn.ReLU(inplace=True),
         )
         self.head = openpifpaf.network.heads.CompositeField3(meta, self.reduced_features * 2)
 
@@ -76,10 +72,7 @@ class Tcaf(openpifpaf.network.HeadNetwork):
         primary = x[::group_length]
         others = [x[i::group_length] for i in range(1, group_length)]
 
-        x = torch.stack([
-            torch.cat([primary, other], dim=1)
-            for other in others
-        ], dim=1)
+        x = torch.stack([torch.cat([primary, o], dim=1) for o in others], dim=1)
         x_shape = x.size()
         x = torch.reshape(x, [x_shape[0] * x_shape[1]] + list(x_shape[2:]))
 
