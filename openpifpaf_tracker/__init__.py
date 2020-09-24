@@ -10,6 +10,13 @@ __version__ = get_versions()['version']
 del get_versions
 
 
+def fix_feature_cache(model):
+    for m in model.modules():
+        if not isinstance(m, TBackbone):
+            continue
+        m.reset()
+
+
 def register():
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
@@ -29,3 +36,5 @@ def register():
 
     openpifpaf.DECODERS.add(decoder.PoseSimilarity)
     openpifpaf.DECODERS.add(decoder.TrackingPose)
+
+    openpifpaf.MODEL_MIGRATION.add(fix_feature_cache)
