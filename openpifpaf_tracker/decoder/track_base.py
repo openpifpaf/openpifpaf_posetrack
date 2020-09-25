@@ -3,7 +3,8 @@ from typing import List
 import numpy as np
 import openpifpaf
 
-from . import utils
+from .track_annotation import TrackAnnotation
+from ..signal import Signal
 
 
 class TrackBase(openpifpaf.decoder.Decoder):
@@ -17,11 +18,13 @@ class TrackBase(openpifpaf.decoder.Decoder):
     def __init__(self):
         super().__init__()
 
-        self.active: List[utils.TrackAnnotation] = []
+        self.active: List[TrackAnnotation] = []
         self.frame_number = 0
 
         self.simplified_track_id_map = {}
         self.simplified_last_track_id = 0
+
+        Signal.subscribe('eval_reset', self.reset)
 
     def simplify_ids(self, ids):
         out = []

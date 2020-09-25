@@ -4,6 +4,7 @@ from . import decoder, headmeta, heads
 from .backbone import TBackbone
 from .crowdpose import CrowdPose
 from .posetrack2018 import Posetrack2018
+from .signal import Signal
 
 from ._version import get_versions
 __version__ = get_versions()['version']
@@ -15,6 +16,13 @@ def fix_feature_cache(model):
         if not isinstance(m, TBackbone):
             continue
         m.reset()
+
+
+def subscribe_cache_reset(model):
+    for m in model.modules():
+        if not isinstance(m, TBackbone):
+            continue
+        Signal.subscribe('eval_reset', m.reset)
 
 
 def register():
@@ -38,3 +46,4 @@ def register():
     openpifpaf.DECODERS.add(decoder.TrackingPose)
 
     openpifpaf.MODEL_MIGRATION.add(fix_feature_cache)
+    openpifpaf.MODEL_MIGRATION.add(subscribe_cache_reset)

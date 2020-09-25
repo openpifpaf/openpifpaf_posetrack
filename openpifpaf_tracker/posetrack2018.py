@@ -350,7 +350,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         return torch.utils.data.DataLoader(
             eval_data, batch_size=self.batch_size, shuffle=False,
             pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=False,
-            collate_fn=openpifpaf.datasets.collate_images_anns_meta)
+            collate_fn=collate.CollateImagesAnnsMetaWithReset('annotation_file'))
 
     def metrics(self):
         return []

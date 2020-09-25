@@ -7,6 +7,7 @@ data-*
 outputs/
 docs-private/
 shared/
+all-images/
 
 # Python
 .ipynb_checkpoints/
