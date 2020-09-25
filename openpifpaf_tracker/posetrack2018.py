@@ -180,21 +180,21 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         group.add_argument('--posetrack2018-data-root',
                            default=cls.data_root)
 
-        group.add_argument('--posetrack2018-square-edge',
+        group.add_argument('--posetrack-square-edge',
                            default=cls.square_edge, type=int,
                            help='square edge of input images')
         assert cls.augmentation
-        group.add_argument('--posetrack2018-no-augmentation',
-                           dest='posetrack2018_augmentation',
+        group.add_argument('--posetrack-no-augmentation',
+                           dest='posetrack_augmentation',
                            default=True, action='store_false',
                            help='do not apply data augmentation')
-        group.add_argument('--posetrack2018-rescale-images',
+        group.add_argument('--posetrack-rescale-images',
                            default=cls.rescale_images, type=float,
                            help='overall rescale factor for images')
-        group.add_argument('--posetrack2018-upsample',
+        group.add_argument('--posetrack-upsample',
                            default=cls.upsample_stride, type=int,
                            help='head upsample stride')
-        group.add_argument('--posetrack2018-min-kp-anns',
+        group.add_argument('--posetrack-min-kp-anns',
                            default=cls.min_kp_anns, type=int,
                            help='filter images with fewer keypoint annotations')
 
@@ -216,11 +216,11 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         cls.eval_annotations = args.posetrack2018_eval_annotations
         cls.data_root = args.posetrack2018_data_root
 
-        cls.square_edge = args.posetrack2018_square_edge
-        cls.augmentation = args.posetrack2018_augmentation
-        cls.rescale_images = args.posetrack2018_rescale_images
-        cls.upsample_stride = args.posetrack2018_upsample
-        cls.min_kp_anns = args.posetrack2018_min_kp_anns
+        cls.square_edge = args.posetrack_square_edge
+        cls.augmentation = args.posetrack_augmentation
+        cls.rescale_images = args.posetrack_rescale_images
+        cls.upsample_stride = args.posetrack_upsample
+        cls.min_kp_anns = args.posetrack_min_kp_anns
 
         # evaluation
         cls.eval_long_edge = args.posetrack_eval_long_edge
