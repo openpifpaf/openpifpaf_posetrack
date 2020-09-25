@@ -4,8 +4,8 @@ import time
 import numpy as np
 import openpifpaf
 
-from ... import headmeta
-from ..track_annotation import TrackAnnotation
+from .. import headmeta
+from .track_annotation import TrackAnnotation
 from .track_base import TrackBase
 
 LOG = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ class TrackingPose(TrackBase):
         if not tracks:
             return
 
-        occupied = openpifpaf.decoder.Occupancy((
+        occupied = openpifpaf.decoder.utils.Occupancy((
             self.n_keypoints,
             int(max(1, max(np.max(t.frame_pose[-1][1].data[:, 1]) for t in tracks) + 1)),
             int(max(1, max(np.max(t.frame_pose[-1][1].data[:, 0]) for t in tracks) + 1)),

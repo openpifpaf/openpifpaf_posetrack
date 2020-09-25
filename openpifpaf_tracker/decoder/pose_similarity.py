@@ -6,11 +6,10 @@ import numpy as np
 import openpifpaf
 import scipy.optimize
 
-from ... import headmeta
-from ..euclidean import Euclidean
-from ..oks import Oks
-from ..track_annotation import TrackAnnotation
+from .. import headmeta
+from .track_annotation import TrackAnnotation
 from .track_base import TrackBase
+from . import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -30,16 +29,17 @@ class PoseSimilarity(TrackBase):
         group = parser.add_argument_group('PoseSimilarity')
         group.add_argument('--posesimilarity-distance',
                            default='euclidean', choices=('euclidean', 'oks'))
-        group.add_argument('--posesimilarity-oks-inflate', default=Oks.inflate, type=float)
+        group.add_argument('--posesimilarity-oks-inflate',
+                           default=utils.Oks.inflate, type=float)
 
     @classmethod
     def configure(cls, args: argparse.Namespace):
         if args.posesimilarity_distance == 'euclidean':
-            cls.distance_function = Euclidean()
+            cls.distance_function = utils.Euclidean()
         elif args.posesimilarity_distance == 'oks':
-            cls.distance_function = Oks()
+            cls.distance_function = utils.Oks()
 
-        Oks.inflate = args.posesimilarity_oks_inflate
+        utils.Oks.inflate = args.posesimilarity_oks_inflate
 
     @classmethod
     def factory(cls, head_metas):

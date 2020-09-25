@@ -3,10 +3,10 @@ from typing import List
 import numpy as np
 import openpifpaf
 
-from ..track_annotation import TrackAnnotation
+from . import utils
 
 
-class TrackBase(openpifpaf.decoder.Generator):
+class TrackBase(openpifpaf.decoder.Decoder):
     single_pose_threshold = 0.3
     multi_pose_threshold = 0.2
     multi_pose_n = 3
@@ -17,7 +17,7 @@ class TrackBase(openpifpaf.decoder.Generator):
     def __init__(self):
         super().__init__()
 
-        self.active: List[TrackAnnotation] = []
+        self.active: List[utils.TrackAnnotation] = []
         self.frame_number = 0
 
         self.simplified_track_id_map = {}
