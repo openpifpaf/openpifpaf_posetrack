@@ -5,7 +5,7 @@ import torch
 
 import openpifpaf
 
-from . import collate, datasets, encoder, headmeta, transforms
+from . import collate, datasets, encoder, headmeta, metric, transforms
 from .transforms import SingleImage as S
 
 
@@ -353,4 +353,12 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             collate_fn=collate.CollateImagesAnnsMetaWithReset('annotation_file'))
 
     def metrics(self):
-        return []
+        eval_data = datasets.Posetrack2018(
+            annotation_files=self.eval_annotations,
+            data_root=self.data_root,
+            preprocess=self._eval_preprocess(),
+        )
+        return [metric.PoseTrackMetric(
+            images=eval_data.meta_images(),
+            categories=eval_data.meta_categories(),
+        )]
