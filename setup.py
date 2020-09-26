@@ -30,6 +30,9 @@ setup(
             'pylint',
             'pytest',
         ],
+        'eval': [
+            'poseval@https://github.com/svenkreiss/poseval/archive/packaging.zip',
+        ],
         'train': [
             'motmetrics',
         ],
