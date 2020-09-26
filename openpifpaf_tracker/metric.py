@@ -10,7 +10,7 @@ import openpifpaf
 LOG = logging.getLogger(__name__)
 
 
-class PoseTrackMetric(openpifpaf.metric.Metric):
+class Posetrack(openpifpaf.metric.Base):
     def __init__(self, *, images, categories, output_format='2018'):
         super().__init__()
 
