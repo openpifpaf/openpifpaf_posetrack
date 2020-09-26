@@ -6,6 +6,7 @@ import torch
 import openpifpaf
 
 from . import collate, datasets, encoder, headmeta, metric, transforms
+from .signal import Signal
 from .transforms import SingleImage as S
 
 
@@ -347,10 +348,11 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             data_root=self.data_root,
             preprocess=self._eval_preprocess(),
         )
-        return torch.utils.data.DataLoader(
+        eval_loader = torch.utils.data.DataLoader(
             eval_data, batch_size=self.batch_size, shuffle=False,
             pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=False,
-            collate_fn=collate.CollateImagesAnnsMetaWithReset('annotation_file'))
+            collate_fn=openpifpaf.datasets.collate_images_anns_meta)
+        return LoaderWithReset(eval_loader, 'annotation_file')
 
     def metrics(self):
         eval_data = datasets.Posetrack2018(
@@ -362,3 +364,26 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             images=eval_data.meta_images(),
             categories=eval_data.meta_categories(),
         )]
+
+
+class LoaderWithReset:
+    def __init__(self, parent, key_to_monitor):
+        self.parent = parent
+        self.key_to_monitor = key_to_monitor
+
+        self.previous_value = None
+
+    def __iter__(self):
+        for images, anns, metas in self.parent:
+            value = metas[0][self.key_to_monitor]
+            if len(metas) >= 2:
+                assert all(m[self.key_to_monitor] == value for m in metas[1:])
+
+            if value != self.previous_value:
+                Signal.emit('eval_reset')
+                self.previous_value = value
+
+            yield images, anns, metas
+
+    def __len__(self):
+        return len(self.parent)
