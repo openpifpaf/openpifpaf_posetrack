@@ -363,6 +363,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         return [metric.Posetrack(
             images=eval_data.meta_images(),
             categories=eval_data.meta_categories(),
+            ground_truth=self.eval_annotations,
         )]
 
 

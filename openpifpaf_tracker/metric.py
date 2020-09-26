@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import os
+import subprocess
 
 import numpy as np
 import openpifpaf
@@ -11,11 +12,13 @@ LOG = logging.getLogger(__name__)
 
 
 class Posetrack(openpifpaf.metric.Base):
-    def __init__(self, *, images, categories, output_format='2018'):
+    def __init__(self, *, images, categories,
+                 ground_truth=None, output_format='2018'):
         super().__init__()
 
         self.images_by_file = images
         self.categories_by_file = categories
+        self.ground_truth_directory = ground_truth
         self.output_format = output_format
 
         self.predictions_by_file = defaultdict(list)
@@ -83,3 +86,30 @@ class Posetrack(openpifpaf.metric.Base):
                 self._write2018(output_dir, annotation_file, additional_data=additional_data)
             else:
                 raise NotImplementedError
+
+        # use poseval to evaluate right away
+        if self.ground_truth_directory is not None:
+            gt_dir = os.path.dirname(self.ground_truth_directory)
+            if not gt_dir.endswith('/'):
+                gt_dir = gt_dir + '/'
+
+            pred_dir = output_dir
+            if not pred_dir.endswith('/'):
+                pred_dir = pred_dir + '/'
+
+            out_dir = output_dir
+            if out_dir.endswith('/'):
+                out_dir = out_dir[:-1]
+            out_dir = out_dir + '-poseval/'
+
+            cmd = [
+                'python', '-m', 'poseval.evaluate',
+                '--groundTruth', gt_dir,
+                '--predictions', pred_dir,
+                '--outputDir', out_dir,
+                '--evalPoseTracking',
+                '--evalPoseEstimation',
+                '--saveEvalPerSequence',
+            ]
+            LOG.info('eval command: %s', cmd)
+            subprocess.check_output(cmd)
