@@ -18,6 +18,7 @@ class Tcaf:
     meta: headmeta.Tcaf
     rescaler: TrackingAnnRescaler = None
     v_threshold: int = 0
+    bmin: float = 0.1
     visualizer: openpifpaf.visualizer.Caf = None
 
     min_size: ClassVar[int] = 3
@@ -189,8 +190,8 @@ class TcafGenerator:
                 sink2[:, mask]
 
             # update bmin
-            self.fields_bmin1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = 0.1
-            self.fields_bmin2[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = 0.1
+            self.fields_bmin1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = self.config.bmin
+            self.fields_bmin2[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = self.config.bmin
 
             # update scale
             self.fields_scale1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = joint_scale
