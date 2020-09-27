@@ -26,10 +26,37 @@ class Posetrack(openpifpaf.metric.Base):
             datetime.datetime.now().strftime('%y%m%d-%H%M%S'),
         )
 
+        self._written_mot_stats_file = None
+        self._written_ap_stats_file = None
+
     def stats(self):
+        if self._written_ap_stats_file is None \
+           or self._written_mot_stats_file is None:
+            return {
+                'stats': [],
+                'text_labels': [],
+            }
+
+        with open(self._written_mot_stats_file, 'r') as f_mot:
+            mot_stats = json.load(f_mot)
+        with open(self._written_ap_stats_file, 'r') as f_ap:
+            ap_stats = json.load(f_ap)
+
+        mot_index_by_name = {n: int(i) for i, n in mot_stats['names'].items()}
+        ap_index_by_name = {n: int(i) for i, n in ap_stats['names'].items()}
+
         return {
-            'stats': [],
-            'text_labels': [],
+            'stats': [
+                mot_stats['mota'][mot_index_by_name['total']],
+                0.5 * (ap_stats['ap'][ap_index_by_name['right_wrist']]
+                       + ap_stats['ap'][ap_index_by_name['left_wrist']]),
+                0.5 * (ap_stats['ap'][ap_index_by_name['right_ankle']]
+                       + ap_stats['ap'][ap_index_by_name['left_ankle']]),
+                ap_stats['ap'][ap_index_by_name['total']],
+            ],
+            'text_labels': [
+                'MOTA', 'AP_wrists', 'AP_ankles', 'AP',
+            ],
         }
 
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
@@ -111,5 +138,8 @@ class Posetrack(openpifpaf.metric.Base):
                 '--evalPoseEstimation',
                 '--saveEvalPerSequence',
             ]
-            LOG.info('eval command: %s', cmd)
-            subprocess.check_output(cmd)
+            LOG.info('eval command: %s', ' '.join(cmd))
+            subprocess.run(cmd, check=True)
+
+            self._written_mot_stats_file = os.path.join(out_dir, 'total_MOT_metrics.json')
+            self._written_ap_stats_file = os.path.join(out_dir, 'total_AP_metrics.json')
