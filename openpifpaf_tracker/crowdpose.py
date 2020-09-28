@@ -92,7 +92,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
     upsample_stride = 1
     min_kp_anns = 1
 
-    eval_long_edge = None
+    eval_long_edge = 641
     eval_orientation_invariant = 0.0
     eval_extended_scale = False
     eval_crowdpose_index = None
