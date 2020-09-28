@@ -316,7 +316,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         for id_ in data.ids:
             image_info = data.coco.imgs[id_]
             LOG.debug('image info %s', image_info)
-            crowdindex = image_info['crowdindex']
+            crowdindex = image_info['crowdIndex']
             if min_index <= crowdindex < max_index:
                 filtered_ids.append(id_)
 
