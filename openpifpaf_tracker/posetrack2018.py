@@ -251,7 +251,6 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         return openpifpaf.transforms.Compose([
             S(transforms.NormalizePosetrack()),
             openpifpaf.transforms.RandomApply(transforms.PreviousPast(), 0.2),
-            S(openpifpaf.transforms.AnnotationJitter()),
             S(transforms.AddCrowdForIncompleteHead()),
             S(openpifpaf.transforms.RandomApply(hflip_posetrack, 0.5)),
             S(openpifpaf.transforms.RescaleRelative(
