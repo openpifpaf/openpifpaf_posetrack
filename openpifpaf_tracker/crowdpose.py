@@ -1,10 +1,14 @@
 import argparse
+import logging
 
 import numpy as np
 import torch
 
 import openpifpaf
 import pycocotools
+
+LOG = logging.getLogger(__name__)
+
 
 KEYPOINTS = [
     'left_shoulder',  # 1
@@ -91,6 +95,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
     eval_long_edge = None
     eval_orientation_invariant = 0.0
     eval_extended_scale = False
+    eval_crowdpose_index = None
 
     def __init__(self):
         super().__init__()
@@ -155,6 +160,9 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         group.add_argument('--crowdpose-eval-extended-scale', default=False, action='store_true')
         group.add_argument('--crowdpose-eval-orientation-invariant',
                            default=cls.eval_orientation_invariant, type=float)
+        group.add_argument('--crowdpose-index', choices=('easy', 'medium', 'hard'),
+                           default=None)
+
 
     @classmethod
     def configure(cls, args: argparse.Namespace):
@@ -181,6 +189,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         cls.eval_long_edge = args.crowdpose_eval_long_edge
         cls.eval_orientation_invariant = args.crowdpose_eval_orientation_invariant
         cls.eval_extended_scale = args.crowdpose_eval_extended_scale
+        cls.eval_crowdpose_index = args.crowdpose_index
 
     def _preprocess(self):
         encoders = (openpifpaf.encoder.Cif(self.head_metas[0]),
@@ -301,6 +310,19 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             openpifpaf.transforms.EVAL_TRANSFORM,
         ])
 
+    @staticmethod
+    def _filter_crowdindex(data: openpifpaf.datasets.Coco, min_index, max_index):
+        filtered_ids = []
+        for id_ in data.ids:
+            image_info = data.coco.imgs[id_]
+            LOG.debug('image info %s', image_info)
+            crowdindex = image_info['crowdindex']
+            if min_index <= crowdindex < max_index:
+                filtered_ids.append(id_)
+
+        LOG.info('crowdindex filter from %d to %d images', len(data.ids), len(filtered_ids))
+        data.ids = filtered_ids
+
     def eval_loader(self):
         eval_data = openpifpaf.datasets.Coco(
             image_dir=self.image_dir,
@@ -310,6 +332,13 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             min_kp_anns=self.min_kp_anns if self.eval_annotations == self.val_annotations else 0,
             category_ids=[1],
         )
+        if self.eval_crowdpose_index == 'easy':
+            self._filter_crowdindex(eval_data, 0.0, 0.1)
+        elif self.eval_crowdpose_index == 'medium':
+            self._filter_crowdindex(eval_data, 0.1, 0.8)
+        elif self.eval_crowdpose_index == 'hard':
+            self._filter_crowdindex(eval_data, 0.8, 1.0)
+
         return torch.utils.data.DataLoader(
             eval_data, batch_size=self.batch_size, shuffle=False,
             pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=False,
