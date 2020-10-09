@@ -53,8 +53,8 @@ class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
                 and ann2['track_id'] in anns1_by_trackid)
         ]
         if not keypoint_sets:
-            return np.zeros((0, 2, self.n_keypoints, 3))
+            return []
 
-        keypoint_sets = np.stack(keypoint_sets)
-        keypoint_sets[:, :, :, :2] /= self.stride
+        for keypoints in keypoint_sets:
+            keypoints[:, :, :2] /= self.stride
         return keypoint_sets

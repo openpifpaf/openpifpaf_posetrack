@@ -35,7 +35,7 @@ class TcafGenerator:
         self.config = config
 
         self.rescaler = config.rescaler or TrackingAnnRescaler(
-            config.meta.stride, len(config.meta.keypoints), config.meta.pose)
+            config.meta.stride, config.meta.pose)
         self.visualizer = config.visualizer or openpifpaf.visualizer.Caf(config.meta)
 
         if self.config.fixed_size:
@@ -57,7 +57,7 @@ class TcafGenerator:
         bg_mask = self.rescaler.bg_mask(
             all_anns[0], all_anns[1], width_height_original)  # TODO add crowd margin
         valid_area = self.rescaler.valid_area(metas[0])
-        LOG.debug('valid area: %s, kpsets = %d, tpaf min size = %d',
+        LOG.debug('valid area: %s, keypoint sets = %d, tcaf min size = %d',
                   valid_area, len(keypoint_sets), self.config.min_size)
 
         n_fields = keypoint_sets.shape[-2]
