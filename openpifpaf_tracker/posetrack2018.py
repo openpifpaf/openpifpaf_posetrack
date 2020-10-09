@@ -230,10 +230,10 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
 
     def _preprocess(self):
         encoders = (
-            encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=1.0)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=1.0)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[2], bmin=1.0)),
-            encoder.Tcaf(self.head_metas[3], bmin=1.0),
+            encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=5.0)),
+            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=5.0)),
+            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[2], bmin=5.0)),
+            encoder.Tcaf(self.head_metas[3], bmin=5.0),
         )
 
         if not self.augmentation:
