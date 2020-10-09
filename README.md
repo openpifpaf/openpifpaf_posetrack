@@ -17,24 +17,36 @@ unzip annotations.zip
 unzip images.zip
 ```
 
-# Train Posetrack-COCO
+# Train posetrack2018-cocokp
 
 ```sh
-python -m openpifpaftracker.train \
-  --pose-checkpoint=resnet50 \
-  --head-quad=1 \
-  --batch-size=8 \
-  --headnets pif17,paf18,tpaf17 pif,paf \
-  --long-edge=401 \
-  --freeze-base=1 \
-  --datasets posetrack coco \
-  --loader-workers=8 \
-  --grouped-lambdas 30,2,2,50,3,3,50,3,3 30,2,2,50,3,3 \
-  --lr=1e-3 \
-  --epochs 20 \
-  --lr-decay 10 15 \
-  --pre-lr=1e-3
+python3 -m openpifpaf_tracker.imagetotracking \
+  --checkpoint ../pifpaf_run/outputs/shufflenetv2k16-201008-120711-cocokp-o10s-58034177.pkl
 ```
+
+```sh
+time CUDA_VISIBLE_DEVICES=0,1 python3 -m openpifpaf.train \
+  --lr=0.000025 --momentum=0.98 --b-scale=10.0 \
+  --epochs=50 \
+  --lr-decay 40 45 \
+  --lr-decay-epochs=5 \
+  --batch-size=8 \
+  --weight-decay=1e-5 \
+  --dataset=posetrack2018-cocokp --posetrack-upsample=2 --cocokp-upsample=2 --cocokp-orientation-invariant=0.5 --cocokp-blur=0.1 --cocokp-square-edge=513 \
+  --checkpoint outputs/tshufflenetv2k16-201008-120711-cocokp-o10s-58034177.pkl
+```
+
+```sh
+time CUDA_VISIBLE_DEVICES=3 python -m openpifpaf.eval \
+  --checkpoint outputs/tshufflenetv2k30-200926-224057-posetrack2018-cocokp-edge513-o50-484ddecb.pkl \
+  --dataset=posetrack2018 \
+  --batch-size=1 --loader-workers=8 \
+  --decoder trackingpose \
+  --seed-threshold=0.4 --keypoint-threshold=0.2 --instance-threshold=0.01 \
+  --write-predictions
+```
+
+===
 
 Full training:
 
