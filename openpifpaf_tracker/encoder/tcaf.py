@@ -60,7 +60,7 @@ class TcafGenerator:
         LOG.debug('valid area: %s, keypoint sets = %d, tcaf min size = %d',
                   valid_area, len(keypoint_sets), self.config.min_size)
 
-        n_fields = keypoint_sets.shape[-2]
+        n_fields = len(self.config.meta.keypoints)
         self.init_fields(n_fields, bg_mask)
         self.fill(keypoint_sets)
         fields = self.fields(valid_area)
