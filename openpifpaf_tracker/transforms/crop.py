@@ -44,7 +44,7 @@ class Crop(openpifpaf.transforms.Preprocess):
                 LOG.debug('valid area before crop of %s: %s', ltrb, original_valid_area)
                 # process crops from left and top
                 meta['valid_area'][:2] = np.maximum(0.0, original_valid_area[:2] - ltrb[:2])
-                # process cropps from right and bottom
+                # process crops from right and bottom
                 new_rb_corner = original_valid_area[:2] + original_valid_area[2:] - ltrb[:2]
                 new_rb_corner = np.maximum(0.0, new_rb_corner)
                 new_rb_corner = np.minimum(new_wh, new_rb_corner)
@@ -81,6 +81,7 @@ class Crop(openpifpaf.transforms.Preprocess):
             max_x = int(area_of_interest[0] + area_of_interest[2]) - self.long_edge
             if max_x > min_x:
                 x_offset = torch.randint(-padding + min_x, max_x + padding, (1,))
+                x_offset = torch.clamp(x_offset, min=min_x, max=max_x).item()
                 x_offset += int(cam_shift[0])
                 x_offset = torch.clamp(x_offset, min=min_x, max=max_x).item()
             else:
@@ -90,6 +91,7 @@ class Crop(openpifpaf.transforms.Preprocess):
             max_y = int(area_of_interest[1] + area_of_interest[3]) - self.long_edge
             if max_y > min_y:
                 y_offset = torch.randint(-padding + min_y, max_y + padding, (1,))
+                y_offset = torch.clamp(y_offset, min=min_y, max=max_y).item()
                 y_offset += int(cam_shift[1])
                 y_offset = torch.clamp(y_offset, min=min_y, max=max_y).item()
             else:
