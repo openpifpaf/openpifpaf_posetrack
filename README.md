@@ -46,6 +46,22 @@ time CUDA_VISIBLE_DEVICES=3 python -m openpifpaf.eval \
   --write-predictions
 ```
 
+```sh
+while true; do \
+  CUDA_VISIBLE_DEVICES=3 find outputs/ -name "tshufflenetv2k30-201009-162243-posetrack2018-cocokp-edge513-o50.pkl.epoch??[0,5]" -exec \
+    python -m openpifpaf.eval \
+      --checkpoint {} \
+      --skip-existing \
+      --dataset=posetrack2018 \
+      --batch-size=1 --loader-workers=8 \
+      --decoder trackingpose \
+      --seed-threshold=0.4 --keypoint-threshold=0.2 --instance-threshold=0.01 \
+      --write-predictions \; \
+  ; \
+  sleep 300; \
+done
+```
+
 ===
 
 Full training:
