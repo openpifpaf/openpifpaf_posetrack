@@ -269,7 +269,6 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             group=[(0, -12), (0, -8), (0, -4)],
             preprocess=self._preprocess(),
             only_annotated=True,
-            max_per_sequence=10,
         )
         return torch.utils.data.DataLoader(
             train_data, batch_size=self.batch_size, shuffle=not self.debug,
@@ -283,7 +282,6 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             group=[(0, -12), (0, -8), (0, -4)],
             preprocess=self._preprocess(),
             only_annotated=True,
-            max_per_sequence=10,
         )
         return torch.utils.data.DataLoader(
             val_data, batch_size=self.batch_size, shuffle=False,
