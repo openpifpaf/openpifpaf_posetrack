@@ -8,7 +8,6 @@ import pysparkling
 import torch
 
 LOG = logging.getLogger(__name__)
-STAT_LOG = logging.getLogger(__name__.replace('openpifpaf_tracker.', 'openpifpaf_tracker.stats.'))
 
 
 class Posetrack2018(torch.utils.data.Dataset):
@@ -85,6 +84,7 @@ class Posetrack2018(torch.utils.data.Dataset):
 
         if self.max_per_sequence:
             if len(groups) > self.max_per_sequence:
+                LOG.debug('groups per file %d -> %d', len(groups), self.max_per_sequence)
                 groups = random.choices(groups, k=self.max_per_sequence)
 
         return groups
@@ -210,6 +210,7 @@ class Posetrack2017(torch.utils.data.Dataset):
 
         if self.max_per_sequence:
             if len(groups) > self.max_per_sequence:
+                LOG.debug('groups per file %d -> %d', len(groups), self.max_per_sequence)
                 groups = random.choices(groups, k=self.max_per_sequence)
 
         return groups
