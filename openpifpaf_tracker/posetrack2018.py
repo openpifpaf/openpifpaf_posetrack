@@ -105,7 +105,7 @@ DENSER_CONNECTIONS = [
     [2, 11],
     [12, 15],  # hip knee cross
     [13, 14],
-    [14, 17],  # knee ancle cross
+    [14, 17],  # knee ankle cross
     [15, 16],
     [6, 13],  # shoulders hip cross
     [7, 12],
