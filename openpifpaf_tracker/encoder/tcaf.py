@@ -190,10 +190,12 @@ class TcafGenerator:
                 sink2[:, mask]
 
             # update bmin
-            self.fields_bmin1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = self.config.bmin
-            self.fields_bmin2[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = self.config.bmin
+            bmin = self.config.bmin / self.config.meta.stride
+            self.fields_bmin1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = bmin
+            self.fields_bmin2[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = bmin
 
             # update scale
+            assert np.isnan(joint_scale) or 0.0 < joint_scale < 100.0
             self.fields_scale1[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = joint_scale
             self.fields_scale2[tcaf_i, fminy:fmaxy, fminx:fmaxx][mask] = joint_scale
 
