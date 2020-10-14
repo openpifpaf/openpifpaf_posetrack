@@ -62,6 +62,21 @@ while true; do \
 done
 ```
 
+Demo:
+
+```sh
+MPLBACKEND=macosx python -m openpifpaf.video --checkpoint outputs/tshufflenetv2k30-200923-230634-posetrack2018-cocokp-edge513-o50-3fbacca9.pkl --long-edge=1201 --decoder trackingpose --show-only-decoded-connections --save-all --source "data-posetrack2018/images/val/001001_mpii_test/%06d.jpg" --skip-frames=5 --image-min-dpi=200 --show-file-extension=jpeg --white-overlay=0.7 --show-multitracking  --image-height=3 --skeleton-solid-threshold=0.0 --text-color=black --monocolor-connections
+
+MPLBACKEND=macosx python -m openpifpaf.video --checkpoint outputs/tshufflenetv2k30-200923-230634-posetrack2018-cocokp-edge513-o50-3fbacca9.pkl --decoder trackingpose --show-only-decoded-connections --save-all --source "data-shadows2/%06d.jpeg" --image-min-dpi=200 --show-file-extension=jpeg --show-multitracking --image-height=3 --textbox-alpha=1.0 --long-edge=321 --skeleton-solid-threshold=0.0 --text-color=black
+```
+
+===
+
+```sh
+srun --account=vita --gres gpu:1 singularity exec --nv pytorch_latest.sif python test.py
+srun --account=vita --gres gpu:1 nvidia-smi
+```
+
 ===
 
 Full training:

@@ -4,7 +4,7 @@ import time
 import numpy as np
 import openpifpaf
 
-from .. import headmeta
+from .. import headmeta, visualizer
 from .track_annotation import TrackAnnotation
 from .track_base import TrackBase
 
@@ -54,6 +54,16 @@ class TrackingPose(TrackBase):
 
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf(
             [self.tracking_cif_meta], [self.tracking_caf_meta])
+
+        self.vis_multitracking = visualizer.MultiTracking(self.tracking_caf_meta)
+
+    @classmethod
+    def cli(cls, parser):
+        parser.add_argument('--show-multitracking', default=False, action='store_true')
+
+    @classmethod
+    def configure(cls, args):
+        visualizer.MultiTracking.show = args.show_multitracking
 
     @classmethod
     def factory(cls, head_metas):
@@ -155,13 +165,19 @@ class TrackingPose(TrackBase):
 
             track_id = getattr(tracking_ann, 'id_', -1)
             if track_id == -1:
-                self.active.append(TrackAnnotation().add(self.frame_number, single_frame_ann))
+                new_track = TrackAnnotation().add(self.frame_number, single_frame_ann)
+                self.active.append(new_track)
+                # assign new track id also to tracking pose for visualization
+                tracking_ann.id_ = new_track.id_
                 continue
 
             for track in self.active:
                 if track.id_ != track_id:
                     continue
                 track.add(self.frame_number, single_frame_ann)
+
+        # visualize tracking pose with assigned track id
+        self.vis_multitracking.predicted(tracking_annotations)
 
         # keypoint threshold
         for t in self.active:
