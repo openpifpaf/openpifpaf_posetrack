@@ -130,6 +130,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     rescale_images = 1.0
     upsample_stride = 1
     min_kp_anns = 1
+    bmin = 5.0
 
     eval_long_edge = 801
     eval_orientation_invariant = 0.0
@@ -198,6 +199,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         group.add_argument('--posetrack-min-kp-anns',
                            default=cls.min_kp_anns, type=int,
                            help='filter images with fewer keypoint annotations')
+        group.add_argument('--posetrack-bmin', default=cls.bmin, type=float)
 
         group.add_argument('--posetrack-eval-long-edge', default=cls.eval_long_edge, type=int)
         assert not cls.eval_extended_scale
@@ -222,6 +224,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         cls.rescale_images = args.posetrack_rescale_images
         cls.upsample_stride = args.posetrack_upsample
         cls.min_kp_anns = args.posetrack_min_kp_anns
+        cls.bmin = args.posetrack_bmin
 
         # evaluation
         cls.eval_long_edge = args.posetrack_eval_long_edge
@@ -230,10 +233,10 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
 
     def _preprocess(self):
         encoders = (
-            encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=5.0)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=5.0)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[2], bmin=5.0)),
-            encoder.Tcaf(self.head_metas[3], bmin=5.0),
+            encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=self.bmin)),
+            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=self.bmin)),
+            encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[2], bmin=self.bmin)),
+            encoder.Tcaf(self.head_metas[3], bmin=self.bmin),
         )
 
         if not self.augmentation:
