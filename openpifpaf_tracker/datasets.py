@@ -1,3 +1,4 @@
+from collections import defaultdict
 import json
 import logging
 import os
@@ -51,33 +52,28 @@ class Posetrack2018(torch.utils.data.Dataset):
 
         all_images = raw_annotation['images']
         all_annotations = raw_annotation.get('annotations', [])  # not in test set
+        all_annotations_by_image_id = defaultdict(list)
+        for ann in all_annotations:
+            all_annotations_by_image_id[ann['image_id']].append(ann)
+
+        frame_groups = self.group
+        if not isinstance(frame_groups[0], (tuple, list)):
+            frame_groups = [frame_groups]
 
         groups = []
-        start_frame = 0 if not self.only_annotated else 12
-        for i in range(start_frame, len(all_images)):
-            this_group = self.group
-            if isinstance(this_group, (tuple, list)) and isinstance(this_group[0], (tuple, list)):
-                this_group = random.choice(this_group)
-            image_groups = [
-                all_images[i+gi]
-                if i+gi >= 0
-                else (
-                    all_images[i-4]
-                    if i-4 >= 0
-                    else all_images[i]
-                )
-                for gi in this_group
-            ]
-            groups.append([
-                {
-                    'annotation_file': file_name,
-                    'image': image,
-                    'annotations': [a
-                                    for a in all_annotations
-                                    if a['image_id'] == image['frame_id']],
-                }
-                for image in image_groups
-            ])
+        for i in range(0, len(all_images)):
+            for this_group in frame_groups:
+                if any(i+gi < 0 for gi in this_group):
+                    continue
+                image_groups = [all_images[i+gi] for gi in this_group]
+                groups.append([
+                    {
+                        'annotation_file': file_name,
+                        'image': image,
+                        'annotations': all_annotations_by_image_id[image['frame_id']],
+                    }
+                    for image in image_groups
+                ])
 
         if self.only_annotated:
             groups = [group for group in groups if all(s['annotations'] for s in group)]
