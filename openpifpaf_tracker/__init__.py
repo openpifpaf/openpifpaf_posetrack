@@ -36,11 +36,11 @@ def register():
 
     openpifpaf.BASE_TYPES.add(TBackbone)
     openpifpaf.BASE_FACTORIES['tshufflenetv2k16'] = lambda: TBackbone(
-        openpifpaf.network.factory(base_name='shufflenetv2k16')[0].base_net)
+        openpifpaf.BASE_FACTORIES['shufflenetv2k16']())
     openpifpaf.BASE_FACTORIES['tshufflenetv2k30'] = lambda: TBackbone(
-        openpifpaf.network.factory(base_name='shufflenetv2k30')[0].base_net)
+        openpifpaf.BASE_FACTORIES['shufflenetv2k30']())
     openpifpaf.BASE_FACTORIES['tresnet50'] = lambda: TBackbone(
-        openpifpaf.network.factory(base_name='resnet50')[0].base_net)
+        openpifpaf.BASE_FACTORIES['resnet50']())
 
     openpifpaf.DECODERS.add(decoder.PoseSimilarity)
     openpifpaf.DECODERS.add(decoder.TrackingPose)
