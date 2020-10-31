@@ -39,6 +39,7 @@ def main():
     args = cli()
     model, _ = openpifpaf.network.factory_from_args(args)
     model.base_net = backbone.TBackbone(model.base_net)
+    model = openpifpaf.network.batchrenorm.BatchRenorm2d.convert_to(model)
 
     LOG.info('saving %s', args.output)
     torch.save({
