@@ -130,7 +130,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     rescale_images = 1.0
     upsample_stride = 1
     min_kp_anns = 1
-    bmin = 5.0
+    bmin = 1.0
 
     eval_long_edge = 801
     eval_orientation_invariant = 0.0
