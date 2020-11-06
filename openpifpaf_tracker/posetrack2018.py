@@ -136,6 +136,8 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     eval_orientation_invariant = 0.0
     eval_extended_scale = False
 
+    ablation_without_tcaf = False
+
     def __init__(self):
         super().__init__()
 
@@ -168,6 +170,9 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         dcaf.upsample_stride = self.upsample_stride
         tcaf.upsample_stride = self.upsample_stride
         self.head_metas = [cif, caf, dcaf, tcaf]
+
+        if self.ablation_without_tcaf:
+            self.head_metas = [cif, caf, dcaf]
 
     @classmethod
     def cli(cls, parser: argparse.ArgumentParser):
@@ -207,6 +212,8 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         group.add_argument('--posetrack-eval-orientation-invariant',
                            default=cls.eval_orientation_invariant, type=float)
 
+        group.add_argument('--ablation-without-tcaf', default=False, action='store_true')
+
     @classmethod
     def configure(cls, args: argparse.Namespace):
         # extract global information
@@ -231,13 +238,17 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         cls.eval_orientation_invariant = args.posetrack_eval_orientation_invariant
         cls.eval_extended_scale = args.posetrack_eval_extended_scale
 
+        # ablation
+        cls.ablation_without_tcaf = args.ablation_without_tcaf
+
     def _preprocess(self):
-        encoders = (
+        encoders = [
             encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=self.bmin)),
             encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=self.bmin)),
             encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[2], bmin=self.bmin)),
-            encoder.Tcaf(self.head_metas[3], bmin=self.bmin),
-        )
+        ]
+        if not self.ablation_without_tcaf:
+            encoders.append(encoder.Tcaf(self.head_metas[3], bmin=self.bmin))
 
         if not self.augmentation:
             return openpifpaf.transforms.Compose([
