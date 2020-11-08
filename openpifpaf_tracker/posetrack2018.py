@@ -125,7 +125,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     eval_annotations = val_annotations
     data_root = 'data-posetrack2018'
 
-    square_edge = 513
+    square_edge = 385
     augmentation = True
     rescale_images = 1.0
     upsample_stride = 1
