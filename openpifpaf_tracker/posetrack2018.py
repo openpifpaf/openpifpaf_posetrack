@@ -306,7 +306,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         # half the batch-size of single-image datasets
         assert self.batch_size % 2 == 0
         return torch.utils.data.DataLoader(
-            val_data, batch_size=self.batch_size // 2, shuffle=False,
+            val_data, batch_size=self.batch_size // 2, shuffle=not self.debug,
             pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=True,
             collate_fn=collate.collate_tracking_images_targets_meta)
 
