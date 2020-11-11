@@ -1,6 +1,5 @@
 import copy
 import logging
-import random
 
 import PIL
 
