@@ -163,73 +163,44 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             collate_fn=collate_tracking_images_targets_meta,
         )
 
-    @classmethod
-    def common_eval_preprocess(cls):
-        rescale_t = None
-        if cls.eval_extended_scale:
-            assert cls.eval_long_edge
-            rescale_t = [
-                transforms.DeterministicEqualChoice([
-                    transforms.RescaleAbsolute(cls.eval_long_edge),
-                    transforms.RescaleAbsolute((cls.eval_long_edge - 1) // 2 + 1),
-                ], salt=1)
-            ]
-        elif cls.eval_long_edge:
-            rescale_t = transforms.RescaleAbsolute(cls.eval_long_edge)
-
-        if cls.batch_size == 1:
-            padding_t = transforms.CenterPadTight(16)
-        else:
-            assert cls.eval_long_edge
-            padding_t = transforms.CenterPad(cls.eval_long_edge)
-
-        orientation_t = None
-        if cls.eval_orientation_invariant:
-            orientation_t = transforms.DeterministicEqualChoice([
-                None,
-                transforms.RotateBy90(fixed_angle=90),
-                transforms.RotateBy90(fixed_angle=180),
-                transforms.RotateBy90(fixed_angle=270),
-            ], salt=3)
-
-        return [
-            transforms.NormalizeAnnotations(),
-            rescale_t,
-            padding_t,
-            orientation_t,
-        ]
-
     def _eval_preprocess(self):
-        return transforms.Compose([
-            *self.common_eval_preprocess(),
-            transforms.ToAnnotations([
-                transforms.ToKpAnnotations(
+        return openpifpaf.transforms.Compose([
+            *openpifpaf.datasets.CocoKp.common_eval_preprocess(),
+            openpifpaf.transforms.ToAnnotations([
+                openpifpaf.transforms.ToKpAnnotations(
                     COCO_CATEGORIES,
                     keypoints_by_category={1: self.head_metas[0].keypoints},
                     skeleton_by_category={1: self.head_metas[1].skeleton},
                 ),
-                transforms.ToCrowdAnnotations(COCO_CATEGORIES),
+                openpifpaf.transforms.ToCrowdAnnotations(COCO_CATEGORIES),
             ]),
-            transforms.EVAL_TRANSFORM,
+            openpifpaf.transforms.EVAL_TRANSFORM,
         ])
 
     def eval_loader(self):
-        eval_data = Coco(
-            image_dir=self.eval_image_dir,
-            ann_file=self.eval_annotations,
+        eval_data = openpifpaf.datasets.Coco(
+            image_dir=openpifpaf.datasets.CocoKp.eval_image_dir,
+            ann_file=openpifpaf.datasets.CocoKp.eval_annotations,
             preprocess=self._eval_preprocess(),
-            annotation_filter=self.eval_annotation_filter,
-            min_kp_anns=self.min_kp_anns if self.eval_annotation_filter else 0,
-            category_ids=[1] if self.eval_annotation_filter else [],
+            annotation_filter=openpifpaf.datasets.CocoKp.eval_annotation_filter,
+            min_kp_anns=(openpifpaf.datasets.CocoKp.min_kp_anns
+                         if openpifpaf.datasets.CocoKp.eval_annotation_filter
+                         else 0),
+            category_ids=[1] if openpifpaf.datasets.CocoKp.eval_annotation_filter else [],
         )
         return torch.utils.data.DataLoader(
-            eval_data, batch_size=self.batch_size, shuffle=False,
-            pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=False,
-            collate_fn=collate_images_anns_meta)
+            eval_data,
+            batch_size=openpifpaf.datasets.CocoKp.batch_size,
+            shuffle=False,
+            pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
+            num_workers=openpifpaf.datasets.CocoKp.loader_workers,
+            drop_last=False,
+            collate_fn=openpifpaf.datasets.collate_images_anns_meta,
+        )
 
     def metrics(self):
-        return [metric.Coco(
-            pycocotools.coco.COCO(self.eval_annotations),
+        return [openpifpaf.metric.Coco(
+            pycocotools.coco.COCO(openpifpaf.datasets.CocoKp.eval_annotations),
             max_per_image=20,
             category_ids=[1],
             iou_type='keypoints',
