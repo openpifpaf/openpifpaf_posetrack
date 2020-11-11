@@ -2,6 +2,7 @@ import openpifpaf
 
 from . import decoder, headmeta, heads
 from .backbone import TBackbone
+from .cocokpst import CocoKpSt
 from .crowdpose import CrowdPose
 from .posetrack2018 import Posetrack2018
 from .signal import Signal
@@ -28,6 +29,7 @@ def subscribe_cache_reset(model):
 def register():
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
+    openpifpaf.DATAMODULES['cocokpst'] = CocoKpSt
 
     # TODO resolve conflicting names: TBase TBackbone
     openpifpaf.HEAD_FACTORIES[headmeta.TBaseCif] = heads.TBaseSingleImage

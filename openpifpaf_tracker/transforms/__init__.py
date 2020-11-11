@@ -3,6 +3,7 @@ from .camera_shift import CameraShift
 from .crop import Crop
 from .deinterlace import Deinterlace
 from .encoders import Encoders
+from .image_to_tracking import ImageToTracking
 from .impute import AddCrowdForIncompleteHead
 from .normalize import NormalizeCocoToMpii, NormalizeMOT, NormalizePosetrack
 from .sample_pairing import SamplePairing
