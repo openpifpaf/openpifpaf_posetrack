@@ -117,7 +117,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
                                               openpifpaf.datasets.CocoKp.blur),
             transforms.ImageToTracking(),
             transforms.Crop(openpifpaf.datasets.CocoKp.square_edge, max_shift=30.0),
-            S(openpifpaf.transforms.CenterPad(openpifpaf.datasets.CocoKp.square_edge)),
+            transforms.Pad(openpifpaf.datasets.CocoKp.square_edge, max_shift=30.0),
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.RotateBy90(),
                                                 openpifpaf.datasets.CocoKp.orientation_invariant)),
             S(openpifpaf.transforms.TRAIN_TRANSFORM),

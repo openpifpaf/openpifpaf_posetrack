@@ -278,7 +278,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             S(openpifpaf.transforms.RescaleRelative(
                 (0.5, 2.0), power_law=True, absolute_reference=801, stretch_range=(0.75, 1.33))),
             transforms.Crop(self.square_edge, max_shift=30.0),
-            S(openpifpaf.transforms.CenterPad(self.square_edge)),
+            transforms.Pad(self.square_edge, max_shift=30.0),
             sample_pairing_t,
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.RotateBy90(), 0.5)),
             S(openpifpaf.transforms.TRAIN_TRANSFORM),
