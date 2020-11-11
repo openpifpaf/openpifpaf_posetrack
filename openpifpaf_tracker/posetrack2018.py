@@ -131,6 +131,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
     upsample_stride = 1
     min_kp_anns = 1
     bmin = 1.0
+    sample_pairing = False
 
     eval_long_edge = 801
     eval_orientation_invariant = 0.0
@@ -205,6 +206,8 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
                            default=cls.min_kp_anns, type=int,
                            help='filter images with fewer keypoint annotations')
         group.add_argument('--posetrack-bmin', default=cls.bmin, type=float)
+        group.add_argument('--posetrack-sample-pairing',
+                           default=False, action='store_true')
 
         group.add_argument('--posetrack-eval-long-edge', default=cls.eval_long_edge, type=int)
         assert not cls.eval_extended_scale
@@ -232,6 +235,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         cls.upsample_stride = args.posetrack_upsample
         cls.min_kp_anns = args.posetrack_min_kp_anns
         cls.bmin = args.posetrack_bmin
+        cls.sample_pairing = args.posetrack_sample_pairing
 
         # evaluation
         cls.eval_long_edge = args.posetrack_eval_long_edge
@@ -259,6 +263,10 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
                 transforms.Encoders(encoders),
             ])
 
+        sample_pairing_t = None
+        if self.sample_pairing:
+            sample_pairing_t = transforms.SamplePairing()
+
         hflip_posetrack = openpifpaf.transforms.HFlip(
             KEYPOINTS,
             openpifpaf.datasets.constants.HFLIP)
@@ -271,6 +279,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
                 (0.5, 2.0), power_law=True, absolute_reference=801, stretch_range=(0.75, 1.33))),
             transforms.Crop(self.square_edge, max_shift=30.0),
             S(openpifpaf.transforms.CenterPad(self.square_edge)),
+            sample_pairing_t,
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.RotateBy90(), 0.5)),
             S(openpifpaf.transforms.TRAIN_TRANSFORM),
             transforms.Encoders(encoders),
