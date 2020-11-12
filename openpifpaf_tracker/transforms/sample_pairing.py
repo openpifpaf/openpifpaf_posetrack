@@ -9,6 +9,19 @@ LOG = logging.getLogger(__name__)
 
 
 class SamplePairing(openpifpaf.transforms.Preprocess):
+    """Sample Pairing
+
+    Implements:
+    @article{inoue2018data,
+        title={Data augmentation by pairing samples for images classification},
+        author={Inoue, Hiroshi},
+        journal={arXiv preprint arXiv:1801.02929},
+        year={2018}
+    }
+    This was originally published for classification and adapted here for
+    pose estimation.
+    """
+
     def __init__(self):
         self.previous_images = None
         self.previous_all_annotations = []
