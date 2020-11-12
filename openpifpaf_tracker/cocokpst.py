@@ -13,8 +13,7 @@ from openpifpaf.datasets.constants import (
     DENSER_COCO_PERSON_CONNECTIONS,
     HFLIP,
 )
-from .collate import collate_tracking_images_targets_meta
-from . import encoder, headmeta, transforms
+from . import collate, encoder, headmeta, transforms
 from .transforms import SingleImage as S
 
 try:
@@ -135,13 +134,13 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         return torch.utils.data.DataLoader(
             train_data,
-            batch_size=openpifpaf.datasets.CocoKp.batch_size,
+            batch_size=openpifpaf.datasets.CocoKp.batch_size // 2,
             shuffle=(not openpifpaf.datasets.CocoKp.debug
                      and openpifpaf.datasets.CocoKp.augmentation),
             pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
             num_workers=openpifpaf.datasets.CocoKp.loader_workers,
             drop_last=True,
-            collate_fn=collate_tracking_images_targets_meta,
+            collate_fn=collate.collate_tracking_images_targets_meta,
         )
 
     def val_loader(self):
@@ -155,12 +154,12 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         return torch.utils.data.DataLoader(
             val_data,
-            batch_size=openpifpaf.datasets.CocoKp.batch_size,
+            batch_size=openpifpaf.datasets.CocoKp.batch_size // 2,
             shuffle=False,
             pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
             num_workers=openpifpaf.datasets.CocoKp.loader_workers,
             drop_last=True,
-            collate_fn=collate_tracking_images_targets_meta,
+            collate_fn=collate.collate_tracking_images_targets_meta,
         )
 
     def _eval_preprocess(self):
