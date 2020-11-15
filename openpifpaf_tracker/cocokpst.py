@@ -3,7 +3,7 @@ import argparse
 import torch
 
 import openpifpaf
-from openpifpaf.datasets.constants import (
+from openpifpaf.plugins.coco.constants import (
     COCO_CATEGORIES,
     COCO_KEYPOINTS,
     COCO_PERSON_SKELETON,
@@ -61,10 +61,10 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             only_in_field_of_view=True,
         )
 
-        cif.upsample_stride = openpifpaf.datasets.CocoKp.upsample_stride
-        caf.upsample_stride = openpifpaf.datasets.CocoKp.upsample_stride
-        dcaf.upsample_stride = openpifpaf.datasets.CocoKp.upsample_stride
-        tcaf.upsample_stride = openpifpaf.datasets.CocoKp.upsample_stride
+        cif.upsample_stride = openpifpaf.plugins.coco.CocoKp.upsample_stride
+        caf.upsample_stride = openpifpaf.plugins.coco.CocoKp.upsample_stride
+        dcaf.upsample_stride = openpifpaf.plugins.coco.CocoKp.upsample_stride
+        tcaf.upsample_stride = openpifpaf.plugins.coco.CocoKp.upsample_stride
         self.head_metas = [cif, caf, dcaf, tcaf]
 
     @classmethod
@@ -78,7 +78,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         pass
 
     def _preprocess(self):
-        bmin = openpifpaf.datasets.CocoKp.bmin
+        bmin = openpifpaf.plugins.coco.CocoKp.bmin
         encoders = (
             encoder.SingleImage(openpifpaf.encoder.Cif(self.head_metas[0], bmin=bmin)),
             encoder.SingleImage(openpifpaf.encoder.Caf(self.head_metas[1], bmin=bmin)),
@@ -86,25 +86,25 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             encoder.Tcaf(self.head_metas[3], bmin=bmin),
         )
 
-        if not openpifpaf.datasets.CocoKp.augmentation:
+        if not openpifpaf.plugins.coco.CocoKp.augmentation:
             return openpifpaf.transforms.Compose([
                 openpifpaf.transforms.NormalizeAnnotations(),
-                openpifpaf.transforms.RescaleAbsolute(openpifpaf.datasets.CocoKp.square_edge),
-                openpifpaf.transforms.CenterPad(openpifpaf.datasets.CocoKp.square_edge),
+                openpifpaf.transforms.RescaleAbsolute(openpifpaf.plugins.coco.CocoKp.square_edge),
+                openpifpaf.transforms.CenterPad(openpifpaf.plugins.coco.CocoKp.square_edge),
                 transforms.ImageToTracking(),
                 S(openpifpaf.transforms.EVAL_TRANSFORM),
                 transforms.Encoders(encoders),
             ])
 
-        if openpifpaf.datasets.CocoKp.extended_scale:
+        if openpifpaf.plugins.coco.CocoKp.extended_scale:
             rescale_t = openpifpaf.transforms.RescaleRelative(
-                scale_range=(0.25 * openpifpaf.datasets.CocoKp.rescale_images,
-                             2.0 * openpifpaf.datasets.CocoKp.rescale_images),
+                scale_range=(0.25 * openpifpaf.plugins.coco.CocoKp.rescale_images,
+                             2.0 * openpifpaf.plugins.coco.CocoKp.rescale_images),
                 power_law=True, stretch_range=(0.75, 1.33))
         else:
             rescale_t = openpifpaf.transforms.RescaleRelative(
-                scale_range=(0.4 * openpifpaf.datasets.CocoKp.rescale_images,
-                             2.0 * openpifpaf.datasets.CocoKp.rescale_images),
+                scale_range=(0.4 * openpifpaf.plugins.coco.CocoKp.rescale_images,
+                             2.0 * openpifpaf.plugins.coco.CocoKp.rescale_images),
                 power_law=True, stretch_range=(0.75, 1.33))
 
         return openpifpaf.transforms.Compose([
@@ -113,58 +113,58 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
                 openpifpaf.transforms.HFlip(COCO_KEYPOINTS, HFLIP), 0.5),
             rescale_t,
             openpifpaf.transforms.RandomApply(openpifpaf.transforms.Blur(),
-                                              openpifpaf.datasets.CocoKp.blur),
+                                              openpifpaf.plugins.coco.CocoKp.blur),
             transforms.ImageToTracking(),
-            transforms.Crop(openpifpaf.datasets.CocoKp.square_edge, max_shift=30.0),
-            transforms.Pad(openpifpaf.datasets.CocoKp.square_edge, max_shift=30.0),
+            transforms.Crop(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
+            transforms.Pad(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.RotateBy90(),
-                                                openpifpaf.datasets.CocoKp.orientation_invariant)),
+                                                openpifpaf.plugins.coco.CocoKp.orientation_invariant)),
             S(openpifpaf.transforms.TRAIN_TRANSFORM),
             transforms.Encoders(encoders),
         ])
 
     def train_loader(self):
-        train_data = openpifpaf.datasets.Coco(
-            image_dir=openpifpaf.datasets.CocoKp.train_image_dir,
-            ann_file=openpifpaf.datasets.CocoKp.train_annotations,
+        train_data = openpifpaf.plugins.coco.CocoDataset(
+            image_dir=openpifpaf.plugins.coco.CocoKp.train_image_dir,
+            ann_file=openpifpaf.plugins.coco.CocoKp.train_annotations,
             preprocess=self._preprocess(),
             annotation_filter=True,
-            min_kp_anns=openpifpaf.datasets.CocoKp.min_kp_anns,
+            min_kp_anns=openpifpaf.plugins.coco.CocoKp.min_kp_anns,
             category_ids=[1],
         )
         return torch.utils.data.DataLoader(
             train_data,
-            batch_size=openpifpaf.datasets.CocoKp.batch_size // 2,
-            shuffle=(not openpifpaf.datasets.CocoKp.debug
-                     and openpifpaf.datasets.CocoKp.augmentation),
-            pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
-            num_workers=openpifpaf.datasets.CocoKp.loader_workers,
+            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size // 2,
+            shuffle=(not openpifpaf.plugins.coco.CocoKp.debug
+                     and openpifpaf.plugins.coco.CocoKp.augmentation),
+            pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
+            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
             drop_last=True,
             collate_fn=collate.collate_tracking_images_targets_meta,
         )
 
     def val_loader(self):
-        val_data = openpifpaf.datasets.Coco(
-            image_dir=openpifpaf.datasets.CocoKp.val_image_dir,
-            ann_file=openpifpaf.datasets.CocoKp.val_annotations,
+        val_data = openpifpaf.plugins.coco.CocoDataset(
+            image_dir=openpifpaf.plugins.coco.CocoKp.val_image_dir,
+            ann_file=openpifpaf.plugins.coco.CocoKp.val_annotations,
             preprocess=self._preprocess(),
             annotation_filter=True,
-            min_kp_anns=openpifpaf.datasets.CocoKp.min_kp_anns,
+            min_kp_anns=openpifpaf.plugins.coco.CocoKp.min_kp_anns,
             category_ids=[1],
         )
         return torch.utils.data.DataLoader(
             val_data,
-            batch_size=openpifpaf.datasets.CocoKp.batch_size // 2,
+            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size // 2,
             shuffle=False,
-            pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
-            num_workers=openpifpaf.datasets.CocoKp.loader_workers,
+            pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
+            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
             drop_last=True,
             collate_fn=collate.collate_tracking_images_targets_meta,
         )
 
     def _eval_preprocess(self):
         return openpifpaf.transforms.Compose([
-            *openpifpaf.datasets.CocoKp.common_eval_preprocess(),
+            *openpifpaf.plugins.coco.CocoKp.common_eval_preprocess(),
             openpifpaf.transforms.ToAnnotations([
                 openpifpaf.transforms.ToKpAnnotations(
                     COCO_CATEGORIES,
@@ -177,29 +177,29 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         ])
 
     def eval_loader(self):
-        eval_data = openpifpaf.datasets.Coco(
-            image_dir=openpifpaf.datasets.CocoKp.eval_image_dir,
-            ann_file=openpifpaf.datasets.CocoKp.eval_annotations,
+        eval_data = openpifpaf.plugins.coco.CocoDataset(
+            image_dir=openpifpaf.plugins.coco.CocoKp.eval_image_dir,
+            ann_file=openpifpaf.plugins.coco.CocoKp.eval_annotations,
             preprocess=self._eval_preprocess(),
-            annotation_filter=openpifpaf.datasets.CocoKp.eval_annotation_filter,
-            min_kp_anns=(openpifpaf.datasets.CocoKp.min_kp_anns
-                         if openpifpaf.datasets.CocoKp.eval_annotation_filter
+            annotation_filter=openpifpaf.plugins.coco.CocoKp.eval_annotation_filter,
+            min_kp_anns=(openpifpaf.plugins.coco.CocoKp.min_kp_anns
+                         if openpifpaf.plugins.coco.CocoKp.eval_annotation_filter
                          else 0),
-            category_ids=[1] if openpifpaf.datasets.CocoKp.eval_annotation_filter else [],
+            category_ids=[1] if openpifpaf.plugins.coco.CocoKp.eval_annotation_filter else [],
         )
         return torch.utils.data.DataLoader(
             eval_data,
-            batch_size=openpifpaf.datasets.CocoKp.batch_size,
+            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size,
             shuffle=False,
-            pin_memory=openpifpaf.datasets.CocoKp.pin_memory,
-            num_workers=openpifpaf.datasets.CocoKp.loader_workers,
+            pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
+            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
             drop_last=False,
             collate_fn=openpifpaf.datasets.collate_images_anns_meta,
         )
 
     def metrics(self):
         return [openpifpaf.metric.Coco(
-            pycocotools.coco.COCO(openpifpaf.datasets.CocoKp.eval_annotations),
+            pycocotools.coco.COCO(openpifpaf.plugins.coco.CocoKp.eval_annotations),
             max_per_image=20,
             category_ids=[1],
             iou_type='keypoints',

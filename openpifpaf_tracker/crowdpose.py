@@ -71,8 +71,8 @@ UPRIGHT_POSE = np.array([
     [0.0, 10.3, 2.0],  # head
     [0.0, 9.3, 2.0],  # neck,
 ])
-HFLIP = openpifpaf.datasets.constants.HFLIP
-COCO_CATEGORIES = openpifpaf.datasets.constants.COCO_CATEGORIES
+HFLIP = openpifpaf.plugins.coco.constants.HFLIP
+COCO_CATEGORIES = openpifpaf.plugins.coco.constants.COCO_CATEGORIES
 
 
 class CrowdPose(openpifpaf.datasets.DataModule):
@@ -233,7 +233,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         ])
 
     def train_loader(self):
-        train_data = openpifpaf.datasets.Coco(
+        train_data = openpifpaf.plugins.coco.CocoDataset(
             image_dir=self.image_dir,
             ann_file=self.train_annotations,
             preprocess=self._preprocess(),
@@ -247,7 +247,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
             collate_fn=openpifpaf.datasets.collate_images_targets_meta)
 
     def val_loader(self):
-        val_data = openpifpaf.datasets.Coco(
+        val_data = openpifpaf.plugins.coco.CocoDataset(
             image_dir=self.image_dir,
             ann_file=self.val_annotations,
             preprocess=self._preprocess(),
@@ -311,7 +311,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         ])
 
     @staticmethod
-    def _filter_crowdindex(data: openpifpaf.datasets.Coco, min_index, max_index):
+    def _filter_crowdindex(data: openpifpaf.plugins.coco.CocoDataset, min_index, max_index):
         filtered_ids = []
         for id_ in data.ids:
             image_info = data.coco.imgs[id_]
@@ -324,7 +324,7 @@ class CrowdPose(openpifpaf.datasets.DataModule):
         data.ids = filtered_ids
 
     def eval_loader(self):
-        eval_data = openpifpaf.datasets.Coco(
+        eval_data = openpifpaf.plugins.coco.CocoDataset(
             image_dir=self.image_dir,
             ann_file=self.eval_annotations,
             preprocess=self._eval_preprocess(),
