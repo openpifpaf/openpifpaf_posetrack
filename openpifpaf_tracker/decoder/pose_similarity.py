@@ -33,7 +33,7 @@ class PoseSimilarity(TrackBase):
     def cli(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group('PoseSimilarity')
         group.add_argument('--posesimilarity-distance',
-                           default='euclidean', choices=('crafted', 'euclidean', 'oks'))
+                           default='crafted', choices=('crafted', 'euclidean', 'oks'))
         group.add_argument('--posesimilarity-oks-inflate',
                            default=pose_distance.Oks.inflate, type=float)
 
