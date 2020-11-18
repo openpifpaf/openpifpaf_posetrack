@@ -269,7 +269,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
 
         hflip_posetrack = openpifpaf.transforms.HFlip(
             KEYPOINTS,
-            openpifpaf.datasets.constants.HFLIP)
+            openpifpaf.plugins.coco.constants.HFLIP)
         return openpifpaf.transforms.Compose([
             S(transforms.NormalizePosetrack()),
             openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.2),

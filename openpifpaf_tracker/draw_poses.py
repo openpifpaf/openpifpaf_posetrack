@@ -16,24 +16,26 @@ def main():
 
     ann = openpifpaf.Annotation(KEYPOINTS, SKELETON)
     ann.set(UPRIGHT_POSE, np.array(SIGMAS) * scale)
-    openpifpaf.datasets.constants.draw_ann(ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_posetrack.png')
+    openpifpaf.plugins.coco.constants.draw_ann(
+        ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_posetrack.png')
 
-    UPRIGHT_POSE_2TRACKING = np.concatenate([
+    upright_pose_2tracking = np.concatenate([
         UPRIGHT_POSE,
         0.9 * UPRIGHT_POSE + np.array([-1.5, 1.5, 0.0]),
     ])
-    SIGMAS_2TRACKING = np.concatenate([np.array(SIGMAS) * scale, 0.8 * np.array(SIGMAS) * scale])
-    TRACKING2_SKELETON = np.concatenate([
+    sigmas_2tracking = np.concatenate([np.array(SIGMAS) * scale, 0.8 * np.array(SIGMAS) * scale])
+    tracking2_skeleton = np.concatenate([
         np.array(SKELETON) + 17,
         np.array([(j, j + 17) for j in range(1, 18)]),
         np.array(SKELETON),
     ])
-    ann = openpifpaf.Annotation(KEYPOINTS + KEYPOINTS, TRACKING2_SKELETON)
+    ann = openpifpaf.Annotation(KEYPOINTS + KEYPOINTS, tracking2_skeleton)
     ann.set(
-        UPRIGHT_POSE_2TRACKING,
-        SIGMAS_2TRACKING,
+        upright_pose_2tracking,
+        sigmas_2tracking,
     )
-    openpifpaf.datasets.constants.draw_ann(ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_tracking2.png')
+    openpifpaf.plugins.coco.constants.draw_ann(
+        ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_tracking2.png')
 
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 def cli():
     parser = argparse.ArgumentParser(description=__doc__)
 
-    openpifpaf.plugins.register()
+    openpifpaf.plugin.register()
     openpifpaf.logger.cli(parser)
     openpifpaf.network.cli(parser)
 
