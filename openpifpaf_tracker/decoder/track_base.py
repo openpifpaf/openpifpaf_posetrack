@@ -87,9 +87,9 @@ class TrackBase(openpifpaf.decoder.Decoder):
             xs = [x for x, _ in poly]
             ys = [y for _, y in poly]
 
-            kporder = np.argsort(pose[:, 2])[::-1]
+            kp_order = np.argsort(pose[:, 2])[::-1]
             if all(point_in_polygon(kp[0], kp[1], xs, ys)
-                   for kp in pose[kporder[:3]] if kp[2] > 0.05):
+                   for kp in pose[kp_order[:3]] if kp[2] > 0.05):
                 return True
 
             return False
@@ -119,11 +119,10 @@ class TrackBase(openpifpaf.decoder.Decoder):
 
         if all(track.pose_score(frame_number - i) < self.single_pose_threshold
                for i in range(6)) and \
-           sum(
-                   1
-                   for i in range(6)
-                   if track.pose_score(frame_number - i) > self.multi_pose_threshold
-           ) < self.multi_pose_n:
+           sum(1
+               for i in range(6)
+               if track.pose_score(frame_number - i) > self.multi_pose_threshold
+               ) < self.multi_pose_n:
             return False
 
         assert self.minimum_threshold >= 0.0  # make sure to return False when pose is None
