@@ -27,6 +27,15 @@ def subscribe_cache_reset(model):
 
 
 def register():
+    openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (
+        'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a5/'
+        'tshufflenetv2k16-201112-085543-posetrack2018-cocokpst-o50-f8d3e7d5.pkl'
+    )
+    openpifpaf.CHECKPOINT_URLS['tshufflenetv2k30'] = (
+        'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a5/'
+        'tshufflenetv2k30-201115-090131-posetrack2018-cocokpst-o50-934fdc1c.pkl'
+    )
+
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
     openpifpaf.DATAMODULES['cocokpst'] = CocoKpSt
