@@ -36,6 +36,7 @@ def cli():
                         help='checkpoints to evaluate')
     parser.add_argument('--ablation-1', default=False, action='store_true')
     parser.add_argument('--ablation-2', default=False, action='store_true')
+    parser.add_argument('--ablation-3', default=False, action='store_true')
     group = parser.add_argument_group('logging')
     group.add_argument('--debug', default=False, action='store_true',
                        help='print debug messages')
@@ -81,57 +82,9 @@ def cli():
     return args, eval_args
 
 
-Config = namedtuple('Config', ['checkpoint', 'suffix', 'args'])
-
-
-class Benchmark(openpifpaf.benchmark.Benchmark):
-    def print_md(self):
-        """Pretty printing markdown"""
-        stats = self.stats()
-
-        checkpoint_w = max(len(c) for c in stats.keys()) + 2
-        checkpoint_title = 'Checkpoint'
-        labels = ''.join(['{0: <8} |'.format(l) for l in stats['text_labels']])
-        print(
-            f'| {checkpoint_title: <{checkpoint_w}} | {labels}'
-            ' t_{total} [ms]  | t_{dec} [ms] |     size |'
-        )
-
-        reference = None
-        if self.reference_config is not None:
-            reference = stats[self.reference_config.checkpoint + self.reference_config.suffix]
-
-        for checkpoint, data in sorted(stats.items(), key=lambda b_d: b_d[1]['stats'][0]):
-            stats = list(data['stats'])
-            t = 1000.0 * data['total_time'] / data['n_images']
-            tdec = 1000.0 * data['decoder_time'] / data['n_images']
-            file_size = data['file_size'] / 1024 / 1024
-            checkpoint_link = '[' + checkpoint + ']'
-
-            if self.reference_config is not None \
-               and self.reference_config.checkpoint != checkpoint:
-                stats = [v - r for v, r in zip(stats, reference['stats'])]
-                t -= 1000.0 * reference['total_time'] / reference['n_images']
-                tdec -= 1000.0 * reference['decoder_time'] / reference['n_images']
-                file_size -= reference['file_size'] / 1024 / 1024
-
-                values = '__{0: <+2.1f}__'.format(stats[0])
-                if len(stats) > 1:
-                    values += ''.join(['{0: <+6.1f} |'.format(v) for v in stats[1:]])
-            else:
-                values = '__{0: <2.1f}__'.format(stats[0])
-                if len(stats) > 1:
-                    values += ''.join(['{0: <6.1f} |'.format(v) for v in stats[1:]])
-            print(
-                f'| {checkpoint_link: <{checkpoint_w}} | {values} '
-                f'{t: <+15.0f} | {tdec: <+12.0f} | {file_size: >+6.1f}MB |'
-            )
-
-        return self
-
-
 def main():
-    args, eval_args = cli()
+    args, eval_args_no_decoder = cli()
+    eval_args = eval_args_no_decoder + ['--decoder=trackingpose']
     Ablation = namedtuple('Ablation', ['suffix', 'args'])
     ablations = [Ablation('', eval_args)]
 
@@ -148,13 +101,21 @@ def main():
                                              '--ablation-cifseeds-nms',
                                              '--ablation-caf-no-rescore']),
         ]
+    if args.ablation_3:
+        ablations += [
+            Ablation('.euclidean', eval_args_no_decoder + ['--decoder=posesimilarity']),
+        ]
 
     configs = [
-        Config(checkpoint, ablation.suffix, ablation.args)
+        openpifpaf.benchmark.Config(checkpoint, ablation.suffix, ablation.args)
         for checkpoint in args.checkpoints
         for ablation in ablations
     ]
-    Benchmark(configs, args.output, reference_config=configs[0]).run()
+    openpifpaf.benchmark.Benchmark(
+        configs,
+        args.output,
+        reference_config=configs[0],
+    ).run()
 
 
 if __name__ == '__main__':
