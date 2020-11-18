@@ -116,9 +116,9 @@ def main():
         ]
     if args.ablation_4:
         ablations += [
-            Ablation('.w513', eval_args_no_decoder + ['--posetrack-eval-long-edge=513']),
-            Ablation('.w641', eval_args_no_decoder + ['--posetrack-eval-long-edge=641']),
-            Ablation('.w1201', eval_args_no_decoder + ['--posetrack-eval-long-edge=1201']),
+            Ablation('.w513', eval_args + ['--posetrack-eval-long-edge=513']),
+            Ablation('.w641', eval_args + ['--posetrack-eval-long-edge=641']),
+            Ablation('.w1201', eval_args + ['--posetrack-eval-long-edge=1201']),
         ]
 
     configs = [
