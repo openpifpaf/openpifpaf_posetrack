@@ -122,7 +122,7 @@ def main():
     openpifpaf.benchmark.Benchmark(
         configs,
         args.output,
-        reference_config=configs[0],
+        reference_config=configs[0] if len(args.checkpoints) == 1 else None,
     ).run()
 
 
