@@ -37,6 +37,7 @@ def cli():
     parser.add_argument('--ablation-1', default=False, action='store_true')
     parser.add_argument('--ablation-2', default=False, action='store_true')
     parser.add_argument('--ablation-3', default=False, action='store_true')
+    parser.add_argument('--ablation-4', default=False, action='store_true')
     group = parser.add_argument_group('logging')
     group.add_argument('--debug', default=False, action='store_true',
                        help='print debug messages')
@@ -112,6 +113,12 @@ def main():
             Ablation('.oks-inflate2', eval_args_no_decoder + ['--decoder=posesimilarity',
                                                               '--posesimilarity-distance=oks',
                                                               '--posesimilarity-oks-inflate=2.0']),
+        ]
+    if args.ablation_4:
+        ablations += [
+            Ablation('.w513', eval_args_no_decoder + ['--posetrack-eval-long-edge=513']),
+            Ablation('.w641', eval_args_no_decoder + ['--posetrack-eval-long-edge=641']),
+            Ablation('.w1201', eval_args_no_decoder + ['--posetrack-eval-long-edge=1201']),
         ]
 
     configs = [
