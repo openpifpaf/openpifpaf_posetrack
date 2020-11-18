@@ -104,6 +104,13 @@ def main():
     if args.ablation_3:
         ablations += [
             Ablation('.euclidean', eval_args_no_decoder + ['--decoder=posesimilarity']),
+            Ablation('.crafted', eval_args_no_decoder + ['--decoder=posesimilarity',
+                                                         '--posesimilarity-distance=crafted']),
+            Ablation('.oks', eval_args_no_decoder + ['--decoder=posesimilarity',
+                                                     '--posesimilarity-distance=oks']),
+            Ablation('.oks.inflate2', eval_args_no_decoder + ['--decoder=posesimilarity',
+                                                              '--posesimilarity-distance=oks',
+                                                              '--posesimilarity-oks-inflate=2.0']),
         ]
 
     configs = [

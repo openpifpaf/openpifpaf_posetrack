@@ -2,17 +2,9 @@ import numpy as np
 
 
 class Euclidean():
-    """Compute Euclidean distance between a track and a new pose candidate.
+    """Compute Euclidean distance between a track and a new pose candidate."""
 
-    Ingredients:
-    * compare to last pose in track and previous poses in case of temp corruption
-    * require low distance for points that have high confidence in both poses (>=3 points)
-    * "high confidence" is a dynamic measure dependent on the past track
-    * penalize crappy tracks
-    * penalize crappy poses
-    """
-
-    valid_mask = None
+    valid_keypoint_mask = None
 
     def __init__(self, *, invisible_penalty=50.0, metric=1.0):
         self.invisible_penalty = invisible_penalty
@@ -27,7 +19,6 @@ class Euclidean():
         ))
 
     def distance(self, frame_number, pose, track, track_is_good, track_frame=None):
-        # TODO: incorporate track_is_good similarly to how it is done in crafted
         last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0
@@ -46,8 +37,8 @@ class Euclidean():
         if len(track.frame_pose) < -1.0 * track_frame:
             return 1000.0
 
-        pose1 = pose.data[self.valid_mask]
-        pose2 = track.frame_pose[track_frame][1].data[self.valid_mask]
+        pose1 = pose.data[self.valid_keypoint_mask]
+        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
 
         kps_distances = np.linalg.norm((pose2[:, :2] - pose1[:, :2]) / self.metric, axis=1)
         kps_distances = np.clip(kps_distances, 0.0, self.invisible_penalty)

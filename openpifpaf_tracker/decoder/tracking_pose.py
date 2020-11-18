@@ -59,7 +59,8 @@ class TrackingPose(TrackBase):
 
     @classmethod
     def cli(cls, parser):
-        parser.add_argument('--show-multitracking', default=False, action='store_true')
+        group = parser.add_argument_group('trackingpose decoder')
+        group.add_argument('--show-multitracking', default=False, action='store_true')
 
     @classmethod
     def configure(cls, args):
@@ -130,12 +131,12 @@ class TrackingPose(TrackBase):
                 prev_pose = track.pose(self.frame_number + frame_i)
                 if prev_pose is not None:
                     tracking_ann.data[
-                        self.n_keypoints*position_i:
-                        self.n_keypoints*position_i + self.n_keypoints
+                        self.n_keypoints * position_i:
+                        self.n_keypoints * position_i + self.n_keypoints
                     ] = prev_pose.data
                     tracking_ann.joint_scales[
-                        self.n_keypoints*position_i:
-                        self.n_keypoints*position_i + self.n_keypoints
+                        self.n_keypoints * position_i:
+                        self.n_keypoints * position_i + self.n_keypoints
                     ] = prev_pose.joint_scales
 
             tracking_ann.data[tracking_ann.data[:, 2] < 0.05] = 0.0

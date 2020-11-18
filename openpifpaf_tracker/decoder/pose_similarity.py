@@ -9,7 +9,7 @@ import scipy.optimize
 from .. import headmeta
 from .track_annotation import TrackAnnotation
 from .track_base import TrackBase
-from . import utils
+from . import pose_distance
 
 LOG = logging.getLogger(__name__)
 
@@ -22,24 +22,33 @@ class PoseSimilarity(TrackBase):
         self.cif_meta = cif_meta
         self.caf_meta = caf_meta
 
+        assert self.distance_function is not None
+        self.distance_function.valid_keypoint_mask = [
+            1 if kp not in ('left_ear', 'right_ear') else 0
+            for kp in cif_meta.keypoints
+        ]
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf([cif_meta], [caf_meta])
 
     @classmethod
     def cli(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group('PoseSimilarity')
         group.add_argument('--posesimilarity-distance',
-                           default='euclidean', choices=('euclidean', 'oks'))
+                           default='euclidean', choices=('crafted', 'euclidean', 'oks'))
         group.add_argument('--posesimilarity-oks-inflate',
-                           default=utils.Oks.inflate, type=float)
+                           default=pose_distance.Oks.inflate, type=float)
 
     @classmethod
     def configure(cls, args: argparse.Namespace):
         if args.posesimilarity_distance == 'euclidean':
-            cls.distance_function = utils.Euclidean()
+            cls.distance_function = pose_distance.Euclidean()
         elif args.posesimilarity_distance == 'oks':
-            cls.distance_function = utils.Oks()
+            cls.distance_function = pose_distance.Oks()
+        elif args.posesimilarity_distance == 'crafted':
+            cls.distance_function = pose_distance.Crafted()
+        else:
+            raise Exception('distance function type not known')
 
-        utils.Oks.inflate = args.posesimilarity_oks_inflate
+        pose_distance.Oks.inflate = args.posesimilarity_oks_inflate
 
     @classmethod
     def factory(cls, head_metas):
