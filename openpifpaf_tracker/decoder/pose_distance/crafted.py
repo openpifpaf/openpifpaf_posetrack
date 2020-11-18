@@ -26,7 +26,7 @@ class Crafted():
 
     # pylint: disable=too-many-return-statements,too-many-branches
     def distance(self, frame_number, pose, track, track_is_good, track_frame=None):
-        last_track_frame = track.data[-1][0]
+        last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0
         if skipped_frames > 12:
@@ -44,11 +44,11 @@ class Crafted():
         if track_frame > -1:
             return 1000.0
 
-        if len(track.data) < -1.0 * track_frame:
+        if len(track.frame_pose) < -1.0 * track_frame:
             return 1000.0
 
         pose1 = pose.data
-        pose2 = track.data[track_frame][1].data
+        pose2 = track.frame_pose[track_frame][1].data
         # common valid (cv) keypoints
         cv = np.logical_and(pose1[:, 2] > 0.05, pose2[:, 2] > 0.05)
         if not np.any(cv):
@@ -82,9 +82,9 @@ class Crafted():
         kps_distance = np.sum(kps_distances[self.valid_keypoint_mask]) / pose1.shape[0]
 
         crappy_track_penalty = 0.0
-        if len(track.data) < 4:
+        if len(track.frame_pose) < 4:
             crappy_track_penalty = 5.0
-        elif len(track.data) < 8:
+        elif len(track.frame_pose) < 8:
             crappy_track_penalty = 1.0
         if not track_is_good:
             crappy_track_penalty = max(crappy_track_penalty, 1.0)
