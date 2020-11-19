@@ -92,9 +92,9 @@ def main():
     if args.ablation_1:
         ablations += [
             Ablation('.greedy', eval_args + ['--greedy']),
-            Ablation('.greedy.dense', eval_args + ['--greedy', '--dense-connections']),
-            Ablation('.dense', eval_args + ['--dense-connections']),
-            Ablation('.dense.hierarchy', eval_args + ['--dense-connections=0.1']),
+            # Ablation('.greedy.dense', eval_args + ['--greedy', '--dense-connections']),
+            # Ablation('.dense', eval_args + ['--dense-connections']),
+            # Ablation('.dense.hierarchy', eval_args + ['--dense-connections=0.1']),
         ]
     if args.ablation_2:
         ablations += [
