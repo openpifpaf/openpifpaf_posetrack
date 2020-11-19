@@ -103,16 +103,21 @@ def main():
                                              '--ablation-caf-no-rescore']),
         ]
     if args.ablation_3:
+        eval_args_decabl = [
+            arg
+            for arg in eval_args_no_decoder
+            if not arg.startswith('--instance-threshold=')
+        ]
         ablations += [
-            Ablation('.euclidean', eval_args_no_decoder + ['--decoder=posesimilarity:0',
-                                                           '--posesimilarity-distance=euclidean']),
-            Ablation('.crafted', eval_args_no_decoder + ['--decoder=posesimilarity:0',
-                                                         '--posesimilarity-distance=crafted']),
-            Ablation('.oks', eval_args_no_decoder + ['--decoder=posesimilarity:0',
-                                                     '--posesimilarity-distance=oks']),
-            Ablation('.oks-inflate2', eval_args_no_decoder + ['--decoder=posesimilarity:0',
-                                                              '--posesimilarity-distance=oks',
-                                                              '--posesimilarity-oks-inflate=2.0']),
+            Ablation('.euclidean', eval_args_decabl + ['--decoder=posesimilarity:0',
+                                                       '--posesimilarity-distance=euclidean']),
+            Ablation('.crafted', eval_args_decabl + ['--decoder=posesimilarity:0',
+                                                     '--posesimilarity-distance=crafted']),
+            Ablation('.oks', eval_args_decabl + ['--decoder=posesimilarity:0',
+                                                 '--posesimilarity-distance=oks']),
+            Ablation('.oks-inflate2', eval_args_decabl + ['--decoder=posesimilarity:0',
+                                                          '--posesimilarity-distance=oks',
+                                                          '--posesimilarity-oks-inflate=2.0']),
         ]
     if args.ablation_4:
         ablations += [
