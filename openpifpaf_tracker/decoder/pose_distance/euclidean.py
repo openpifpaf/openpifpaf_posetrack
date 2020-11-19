@@ -6,7 +6,7 @@ class Euclidean():
 
     valid_keypoint_mask = None
 
-    def __init__(self, *, invisible_penalty=50.0, metric=1.0):
+    def __init__(self, *, invisible_penalty=400.0, metric=1.0):
         self.invisible_penalty = invisible_penalty
         self.metric = metric
 

@@ -13,7 +13,7 @@ class Crafted():
     """
     valid_keypoint_mask = None
 
-    def __init__(self, *, invisible_penalty=50.0):
+    def __init__(self, *, invisible_penalty=400.0):
         self.invisible_penalty = invisible_penalty
 
     def __call__(self, frame_number, pose, track, track_is_good):
@@ -33,7 +33,7 @@ class Crafted():
             return 1000.0
 
         # skipping frames cost
-        skipped_frame_cost = 5.0 if track_frame else 0.0
+        skipped_frame_cost = 40.0 if track_frame else 0.0
 
         # correct track_frame with skipped_frames
         if track_frame is not None:
@@ -83,17 +83,17 @@ class Crafted():
 
         crappy_track_penalty = 0.0
         if len(track.frame_pose) < 4:
-            crappy_track_penalty = 5.0
+            crappy_track_penalty = 40.0
         elif len(track.frame_pose) < 8:
-            crappy_track_penalty = 1.0
+            crappy_track_penalty = 8.0
         if not track_is_good:
-            crappy_track_penalty = max(crappy_track_penalty, 1.0)
+            crappy_track_penalty = max(crappy_track_penalty, 8.0)
 
         crappy_pose_penalty = 0.0
         if pose.score() < 0.2:
-            crappy_pose_penalty = 5.0
+            crappy_pose_penalty = 40.0
         elif pose.score() < 0.5:
-            crappy_pose_penalty = 1.0
+            crappy_pose_penalty = 8.0
 
         return (
             center_distance / 10.0

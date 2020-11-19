@@ -67,4 +67,4 @@ class Oks:
         g = np.exp(-0.5 * d**2 / (scale**2 * k**2))
         oks = np.mean(g[visible])
 
-        return 11.0 - 11.0*oks
+        return 110.0 * (1.0 - oks)

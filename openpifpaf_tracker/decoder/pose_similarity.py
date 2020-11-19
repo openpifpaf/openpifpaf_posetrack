@@ -28,6 +28,8 @@ class PoseSimilarity(TrackBase):
             for kp in cif_meta.keypoints
         ]
         LOG.debug('valid keypoint mask = %s', self.distance_function.valid_keypoint_mask)
+        self.distance_function.sigmas = np.asarray(cif_meta.sigmas)
+
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf([cif_meta], [caf_meta])
 
     @classmethod
@@ -64,15 +66,9 @@ class PoseSimilarity(TrackBase):
         ]
 
     def __call__(self, fields, *, initial_annotations=None):
-        # set valid_mask
-        self.distance_function.valid_mask = [
-            1 if kp not in ('left_ear', 'right_ear') else 0
-            for kp in self.cif_meta.keypoints
-        ]
-        # set sigmas
-        self.distance_function.sigmas = np.asarray(self.cif_meta.sigmas)
-
         self.frame_number += 1
+        start = time.perf_counter()
+
         self.prune_active(self.frame_number)
 
         pose_start = time.perf_counter()
@@ -87,7 +83,7 @@ class PoseSimilarity(TrackBase):
                     self.frame_number, pose, track, self.track_is_good(track, self.frame_number))
 
                 # option to loose track (e.g. occlusion)
-                cost[track_i + len(self.active), pose_i] = 10.0
+                cost[track_i + len(self.active), pose_i] = 100.0
         LOG.debug('cost time = %.3fs', time.perf_counter() - cost_start)
 
         track_indices, pose_indices = scipy.optimize.linear_sum_assignment(cost)
@@ -113,8 +109,7 @@ class PoseSimilarity(TrackBase):
         #     self.tag_ignore_region(self.frame_number, self.gt_anns)
 
         # pruning lost tracks
-        self.active = [t for t in self.active
-                       if self.track_is_viable(t, self.frame_number)]
+        self.active = [t for t in self.active if self.track_is_viable(t, self.frame_number)]
 
         LOG.info('active tracks = %d, good = %d, track ids = %s',
                  len(self.active),
@@ -127,4 +122,6 @@ class PoseSimilarity(TrackBase):
                 self.frame_number,
                 [t for t in self.active if self.track_is_good(t, self.frame_number)],
             )
+
+        LOG.debug('track time: %.3fs', time.perf_counter() - start)
         return self.annotations(self.frame_number)
