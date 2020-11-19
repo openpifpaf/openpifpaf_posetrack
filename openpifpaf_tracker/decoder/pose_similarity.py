@@ -116,10 +116,12 @@ class PoseSimilarity(TrackBase):
         self.active = [t for t in self.active
                        if self.track_is_viable(t, self.frame_number)]
 
-        LOG.info('active tracks = %d, good = %d',
+        LOG.info('active tracks = %d, good = %d, track ids = %s',
                  len(self.active),
-                 len([t for t in self.active if self.track_is_good(t, self.frame_number)]))
-        LOG.info('track ids = %s', [t.id_ for t in self.active])
+                 len([t for t in self.active if self.track_is_good(t, self.frame_number)]),
+                 [self.simplified_track_id_map.get(t.id_, t.id_)
+                  for t in self.active])
+
         if self.track_visualizer:
             self.track_visualizer.predicted(
                 self.frame_number,
