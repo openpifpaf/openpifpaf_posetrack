@@ -158,6 +158,7 @@ class TrackingPose(TrackBase):
             tracking_fields, initial_annotations=initial_annotations)
 
         # extract new pose annotations from tracking pose
+        active_by_id = {t.id_: t for t in self.active}
         for tracking_ann in tracking_annotations:
             single_frame_ann = openpifpaf.Annotation(
                 self.cif_meta.keypoints, self.caf_meta.skeleton)
@@ -171,11 +172,7 @@ class TrackingPose(TrackBase):
                 # assign new track id also to tracking pose for visualization
                 tracking_ann.id_ = new_track.id_
                 continue
-
-            for track in self.active:
-                if track.id_ != track_id:
-                    continue
-                track.add(self.frame_number, single_frame_ann)
+            active_by_id[track_id].add(self.frame_number, single_frame_ann)
 
         # visualize tracking pose with assigned track id
         self.vis_multitracking.predicted(tracking_annotations)
