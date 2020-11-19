@@ -27,6 +27,7 @@ class PoseSimilarity(TrackBase):
             1 if kp not in ('left_ear', 'right_ear') else 0
             for kp in cif_meta.keypoints
         ]
+        LOG.debug('valid keypoint mask = %s', self.distance_function.valid_keypoint_mask)
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf([cif_meta], [caf_meta])
 
     @classmethod

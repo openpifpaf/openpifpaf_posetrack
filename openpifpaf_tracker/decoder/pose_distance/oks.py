@@ -15,7 +15,7 @@ class Oks:
     * penalize crappy tracks
     * penalize crappy poses
     """
-    valid_mask = None
+    valid_keypoint_mask = None
     sigmas = None
     inflate = 1.0
 
@@ -53,8 +53,8 @@ class Oks:
         if len(track.frame_pose) < -1.0 * track_frame:
             return 1000.0
 
-        pose1 = pose.data[self.valid_mask]
-        pose2 = track.frame_pose[track_frame][1].data[self.valid_mask]
+        pose1 = pose.data[self.valid_keypoint_mask]
+        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
         visible = np.logical_and(pose1[:, 2] > 0.05, pose2[:, 2] > 0.05)
         if not np.any(visible):
             return 1000.0
