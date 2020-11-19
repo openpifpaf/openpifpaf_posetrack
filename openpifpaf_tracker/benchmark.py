@@ -85,7 +85,7 @@ def cli():
 
 def main():
     args, eval_args_no_decoder = cli()
-    eval_args = eval_args_no_decoder + ['--decoder=trackingpose']
+    eval_args = eval_args_no_decoder + ['--decoder=trackingpose:0']
     Ablation = namedtuple('Ablation', ['suffix', 'args'])
     ablations = [Ablation('', eval_args)]
 
@@ -104,13 +104,13 @@ def main():
         ]
     if args.ablation_3:
         ablations += [
-            Ablation('.euclidean', eval_args_no_decoder + ['--decoder=posesimilarity',
+            Ablation('.euclidean', eval_args_no_decoder + ['--decoder=posesimilarity:0',
                                                            '--posesimilarity-distance=euclidean']),
-            Ablation('.crafted', eval_args_no_decoder + ['--decoder=posesimilarity',
+            Ablation('.crafted', eval_args_no_decoder + ['--decoder=posesimilarity:0',
                                                          '--posesimilarity-distance=crafted']),
-            Ablation('.oks', eval_args_no_decoder + ['--decoder=posesimilarity',
+            Ablation('.oks', eval_args_no_decoder + ['--decoder=posesimilarity:0',
                                                      '--posesimilarity-distance=oks']),
-            Ablation('.oks-inflate2', eval_args_no_decoder + ['--decoder=posesimilarity',
+            Ablation('.oks-inflate2', eval_args_no_decoder + ['--decoder=posesimilarity:0',
                                                               '--posesimilarity-distance=oks',
                                                               '--posesimilarity-oks-inflate=2.0']),
         ]
