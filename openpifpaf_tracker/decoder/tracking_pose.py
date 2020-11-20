@@ -54,6 +54,10 @@ class TrackingPose(TrackBase):
 
         self.pose_generator = pose_generator or openpifpaf.decoder.CifCaf(
             [self.tracking_cif_meta], [self.tracking_caf_meta])
+        LOG.debug('keypoint threshold: cifcaf=%f, nms=%f, %s',
+                  openpifpaf.decoder.CifCaf.keypoint_threshold,
+                  openpifpaf.decoder.utils.nms.Keypoints.keypoint_threshold,
+                  openpifpaf.decoder.CifCaf.nms)
 
         self.vis_multitracking = visualizer.MultiTracking(self.tracking_caf_meta)
 
@@ -147,6 +151,10 @@ class TrackingPose(TrackBase):
         LOG.debug('using %d initial annotations', len(initial_annotations))
 
         # use standard pose processor to connect to current frame
+        LOG.debug('overwriting CifCaf parameters')
+        # openpifpaf.decoder.CifCaf.nms = None
+        openpifpaf.decoder.CifCaf.keypoint_threshold = 0.001
+        openpifpaf.decoder.CifCaf.keypoint_threshold_rel = 0.0
         tracking_fields = [
             fields[self.cif_meta.head_index],
             np.concatenate([
