@@ -58,15 +58,6 @@ def cli():
     if not any(l.startswith('--dataset') for l in eval_args):
         LOG.info('adding "--dataset=posetrack2018" to the argument list')
         eval_args.append('--dataset=posetrack2018')
-        if not any(l.startswith('--keypoint-threshold=') for l in eval_args):
-            LOG.info('adding "--keypoint-threshold=0.2" to the argument list')
-            eval_args.append('--keypoint-threshold=0.2')
-        if not any(l.startswith('--keypoint-threshold-rel=') for l in eval_args):
-            LOG.info('adding "--keypoint-threshold-rel=0.5" to the argument list')
-            eval_args.append('--keypoint-threshold-rel=0.5')
-        if not any(l.startswith('--seed-threshold') for l in eval_args):
-            LOG.info('adding "--seed-threshold=0.4" to the argument list')
-            eval_args.append('--seed-threshold=0.4')
         if not any(l.startswith('--write-predictions') for l in eval_args):
             LOG.info('adding "--write-predictions" to the argument list')
             eval_args.append('--write-predictions')
