@@ -12,8 +12,9 @@ class Crafted:
     * penalize crappy poses
     """
 
-    def __init__(self, *, invisible_penalty=400.0):
-        self.invisible_penalty = invisible_penalty
+    invisible_penalty = 400.0
+
+    def __init__(self):
         self.valid_keypoint_mask = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
@@ -32,9 +33,6 @@ class Crafted:
         if skipped_frames > 12:
             return 1000.0
 
-        # skipping frames cost
-        skipped_frame_cost = 40.0 if track_frame else 0.0
-
         # correct track_frame with skipped_frames
         if track_frame is not None:
             track_frame += skipped_frames
@@ -47,18 +45,8 @@ class Crafted:
         if len(track.frame_pose) < -1.0 * track_frame:
             return 1000.0
 
-        pose1 = pose.data
-        pose2 = track.frame_pose[track_frame][1].data
-        # common valid (cv) keypoints
-        cv = np.logical_and(pose1[:, 2] > 0.05, pose2[:, 2] > 0.05)
-        if not np.any(cv):
-            return 1000.0
-
-        if np.min(pose2[cv, 0]) - np.max(pose1[cv, 0]) > self.invisible_penalty or \
-           np.min(pose1[cv, 0]) - np.max(pose2[cv, 0]) > self.invisible_penalty or \
-           np.min(pose2[cv, 1]) - np.max(pose1[cv, 1]) > self.invisible_penalty or \
-           np.min(pose1[cv, 1]) - np.max(pose2[cv, 1]) > self.invisible_penalty:
-            return 1000.0
+        pose1 = pose.data[self.valid_keypoint_mask]
+        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
 
         keypoint_scores = pose1[:, 2] * pose2[:, 2]
         kps_order = np.argsort(keypoint_scores)[::-1]
@@ -73,13 +61,10 @@ class Crafted:
         center_distance = np.linalg.norm(pose2_center - pose1_center)
 
         kps_distances = np.linalg.norm(pose2_centered[:, :2] - pose1_centered[:, :2], axis=1)
+        kps_distances = np.clip(kps_distances, 0.0, self.invisible_penalty)
         kps_distances[pose1[:, 2] < 0.05] = self.invisible_penalty
         kps_distances[pose2[:, 2] < 0.05] = self.invisible_penalty
-        kps_distances[kps_order[3:]] = np.minimum(
-            self.invisible_penalty,
-            kps_distances[kps_order[3:]],
-        )
-        kps_distance = np.sum(kps_distances[self.valid_keypoint_mask]) / pose1.shape[0]
+        kps_distance = np.mean(kps_distances)
 
         crappy_track_penalty = 0.0
         if len(track.frame_pose) < 4:
@@ -94,6 +79,9 @@ class Crafted:
             crappy_pose_penalty = 40.0
         elif pose.score() < 0.5:
             crappy_pose_penalty = 8.0
+
+        # skipping frames cost
+        skipped_frame_cost = 40.0 if track_frame else 0.0
 
         return (
             center_distance / 10.0
