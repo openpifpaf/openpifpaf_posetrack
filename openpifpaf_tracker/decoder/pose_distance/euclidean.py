@@ -4,10 +4,9 @@ import numpy as np
 class Euclidean:
     """Compute Euclidean distance between a track and a new pose candidate."""
 
-    def __init__(self, *, invisible_penalty=400.0, metric=1.0):
-        self.invisible_penalty = invisible_penalty
-        self.metric = metric
+    invisible_penalty = 400.0
 
+    def __init__(self):
         self.valid_keypoint_mask = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
@@ -40,7 +39,7 @@ class Euclidean:
         pose1 = pose.data[self.valid_keypoint_mask]
         pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
 
-        kps_distances = np.linalg.norm((pose2[:, :2] - pose1[:, :2]) / self.metric, axis=1)
+        kps_distances = np.linalg.norm(pose2[:, :2] - pose1[:, :2], axis=1)
         kps_distances = np.clip(kps_distances, 0.0, self.invisible_penalty)
         kps_distances[pose1[:, 2] < 0.05] = self.invisible_penalty
         kps_distances[pose2[:, 2] < 0.05] = self.invisible_penalty
