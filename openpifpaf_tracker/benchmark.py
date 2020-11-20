@@ -58,18 +58,15 @@ def cli():
     if not any(l.startswith('--dataset') for l in eval_args):
         LOG.info('adding "--dataset=posetrack2018" to the argument list')
         eval_args.append('--dataset=posetrack2018')
-        if not any(l.startswith('--keypoint-threshold') for l in eval_args):
+        if not any(l.startswith('--keypoint-threshold=') for l in eval_args):
             LOG.info('adding "--keypoint-threshold=0.2" to the argument list')
             eval_args.append('--keypoint-threshold=0.2')
-        if not any(l.startswith('--instance-threshold') for l in eval_args):
-            LOG.info('adding "--instance-threshold=0.01" to the argument list')
-            eval_args.append('--instance-threshold=0.01')
+        if not any(l.startswith('--keypoint-threshold-rel=') for l in eval_args):
+            LOG.info('adding "--keypoint-threshold-rel=0.5" to the argument list')
+            eval_args.append('--keypoint-threshold-rel=0.5')
         if not any(l.startswith('--seed-threshold') for l in eval_args):
             LOG.info('adding "--seed-threshold=0.4" to the argument list')
             eval_args.append('--seed-threshold=0.4')
-        if not any(l.startswith('--no-reverse-match') for l in eval_args):
-            LOG.info('adding "--no-reverse-match" to the argument list')
-            eval_args.append('--no-reverse-match')
         if not any(l.startswith('--write-predictions') for l in eval_args):
             LOG.info('adding "--write-predictions" to the argument list')
             eval_args.append('--write-predictions')
@@ -92,6 +89,8 @@ def main():
     if args.ablation_1:
         ablations += [
             Ablation('.greedy', eval_args + ['--greedy']),
+            Ablation('.no-reverse', eval_args + ['--no-reverse-match']),
+            Ablation('.greedy.no-reverse', eval_args + ['--greedy', '--no-reverse-match']),
             # Ablation('.greedy.dense', eval_args + ['--greedy', '--dense-connections']),
             # Ablation('.dense', eval_args + ['--dense-connections']),
             # Ablation('.dense.hierarchy', eval_args + ['--dense-connections=0.1']),
