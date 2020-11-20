@@ -87,6 +87,14 @@ class TrackingPose(TrackBase):
         if not tracks:
             return
 
+        # keypoint threshold
+        for t in tracks:
+            frame_ann = t.pose(self.frame_number)
+            if frame_ann is None:
+                continue
+            kps = frame_ann.data
+            kps[kps[:, 2] < openpifpaf.decoder.utils.nms.Keypoints.keypoint_threshold] = 0.0
+
         occupied = openpifpaf.decoder.utils.Occupancy((
             self.n_keypoints,
             int(max(1, max(np.max(t.frame_pose[-1][1].data[:, 1]) for t in tracks) + 1)),
@@ -111,6 +119,14 @@ class TrackingPose(TrackBase):
                     xyv[2] = 0.0
                 else:
                     occupied.set(f, xyv[0], xyv[1], joint_s)
+
+        # keypoint threshold
+        for t in tracks:
+            frame_ann = t.pose(self.frame_number)
+            if frame_ann is None:
+                continue
+            kps = frame_ann.data
+            kps[kps[:, 2] < openpifpaf.decoder.utils.nms.Keypoints.keypoint_threshold] = 0.0
 
         if self.pose_generator.occupancy_visualizer is not None:
             LOG.debug('Occupied fields after NMS')
@@ -152,7 +168,7 @@ class TrackingPose(TrackBase):
 
         # use standard pose processor to connect to current frame
         LOG.debug('overwriting CifCaf parameters')
-        # openpifpaf.decoder.CifCaf.nms = None
+        openpifpaf.decoder.CifCaf.nms = None
         openpifpaf.decoder.CifCaf.keypoint_threshold = 0.001
         openpifpaf.decoder.CifCaf.keypoint_threshold_rel = 0.0
         tracking_fields = [
@@ -184,14 +200,6 @@ class TrackingPose(TrackBase):
 
         # visualize tracking pose with assigned track id
         self.vis_multitracking.predicted(tracking_annotations)
-
-        # keypoint threshold
-        for t in self.active:
-            frame_ann = t.pose(self.frame_number)
-            if frame_ann is None:
-                continue
-            kps = frame_ann.data
-            kps[kps[:, 2] < self.pose_generator.keypoint_threshold] = 0.0
 
         # nms tracks
         self.soft_nms(self.active, self.frame_number)
