@@ -170,7 +170,6 @@ class TrackingPose(TrackBase):
         LOG.debug('overwriting CifCaf parameters')
         openpifpaf.decoder.CifCaf.nms = None
         openpifpaf.decoder.CifCaf.keypoint_threshold = 0.001
-        openpifpaf.decoder.CifCaf.keypoint_threshold_rel = 0.0
         tracking_fields = [
             fields[self.cif_meta.head_index],
             np.concatenate([
