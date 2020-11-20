@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Crafted():
+class Crafted:
     """Compute hand crafted distance between a track and a new pose candidate.
 
     Ingredients:
@@ -11,10 +11,10 @@ class Crafted():
     * penalize crappy tracks
     * penalize crappy poses
     """
-    valid_keypoint_mask = None
 
     def __init__(self, *, invisible_penalty=400.0):
         self.invisible_penalty = invisible_penalty
+        self.valid_keypoint_mask = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
         return min((

@@ -15,14 +15,15 @@ LOG = logging.getLogger(__name__)
 
 
 class PoseSimilarity(TrackBase):
-    distance_function = None
+    distance_type = None
 
     def __init__(self, cif_meta, caf_meta, *, pose_generator=None):
         super().__init__()
         self.cif_meta = cif_meta
         self.caf_meta = caf_meta
 
-        assert self.distance_function is not None
+        assert self.distance_type is not None
+        self.distance_function = self.distance_type()
         self.distance_function.valid_keypoint_mask = [
             1 if kp not in ('left_ear', 'right_ear') else 0
             for kp in cif_meta.keypoints
@@ -43,11 +44,11 @@ class PoseSimilarity(TrackBase):
     @classmethod
     def configure(cls, args: argparse.Namespace):
         if args.posesimilarity_distance == 'euclidean':
-            cls.distance_function = pose_distance.Euclidean()
+            cls.distance_type = pose_distance.Euclidean
         elif args.posesimilarity_distance == 'oks':
-            cls.distance_function = pose_distance.Oks()
+            cls.distance_type = pose_distance.Oks
         elif args.posesimilarity_distance == 'crafted':
-            cls.distance_function = pose_distance.Crafted()
+            cls.distance_type = pose_distance.Crafted
         else:
             raise Exception('distance function type not known')
 

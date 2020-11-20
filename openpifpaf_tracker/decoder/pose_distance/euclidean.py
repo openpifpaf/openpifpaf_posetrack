@@ -1,14 +1,14 @@
 import numpy as np
 
 
-class Euclidean():
+class Euclidean:
     """Compute Euclidean distance between a track and a new pose candidate."""
-
-    valid_keypoint_mask = None
 
     def __init__(self, *, invisible_penalty=400.0, metric=1.0):
         self.invisible_penalty = invisible_penalty
         self.metric = metric
+
+        self.valid_keypoint_mask = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
         return min((

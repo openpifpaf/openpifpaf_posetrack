@@ -15,9 +15,11 @@ class Oks:
     * penalize crappy tracks
     * penalize crappy poses
     """
-    valid_keypoint_mask = None
-    sigmas = None
     inflate = 1.0
+
+    def __init__(self):
+        self.valid_keypoint_mask = None
+        self.sigmas = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
         return min((
