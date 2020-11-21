@@ -47,7 +47,7 @@ class PoseSimilarity(TrackBase):
         if args.posesimilarity_distance == 'euclidean':
             cls.distance_type = pose_distance.Euclidean
         elif args.posesimilarity_distance == 'euclidean4':
-            cls.distance_type = lambda: pose_distance.Euclidean(track_frames=[-1, -4, -8, -12])
+            cls.distance_type = lambda _: pose_distance.Euclidean(track_frames=[-1, -4, -8, -12])
         elif args.posesimilarity_distance == 'oks':
             cls.distance_type = pose_distance.Oks
         elif args.posesimilarity_distance == 'crafted':
