@@ -1,4 +1,7 @@
+import logging
 import numpy as np
+
+LOG = logging.getLogger(__name__)
 
 
 class Crafted:
@@ -15,7 +18,7 @@ class Crafted:
     invisible_penalty = 400.0
 
     def __init__(self):
-        self.valid_keypoint_mask = None
+        self.valid_keypoints = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
         return min((
@@ -26,7 +29,7 @@ class Crafted:
         ))
 
     # pylint: disable=too-many-return-statements,too-many-branches
-    def distance(self, frame_number, pose, track, track_is_good, track_frame=None):
+    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):
         last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0
@@ -34,19 +37,14 @@ class Crafted:
             return 1000.0
 
         # correct track_frame with skipped_frames
-        if track_frame is not None:
-            track_frame += skipped_frames
-        else:
-            track_frame = -1
-
+        track_frame += skipped_frames
         if track_frame > -1:
             return 1000.0
-
-        if len(track.frame_pose) < -1.0 * track_frame:
+        if len(track.frame_pose) < -track_frame:
             return 1000.0
 
-        pose1 = pose.data[self.valid_keypoint_mask]
-        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
+        pose1 = pose.data[self.valid_keypoints]
+        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoints]
 
         keypoint_scores = pose1[:, 2] * pose2[:, 2]
         kps_order = np.argsort(keypoint_scores)[::-1]
@@ -64,7 +62,7 @@ class Crafted:
         kps_distances = np.clip(kps_distances, 0.0, self.invisible_penalty)
         kps_distances[pose1[:, 2] < 0.05] = self.invisible_penalty
         kps_distances[pose2[:, 2] < 0.05] = self.invisible_penalty
-        kps_distance = np.mean(kps_distances)
+        kps_distance_centered = np.mean(kps_distances)
 
         crappy_track_penalty = 0.0
         if len(track.frame_pose) < 4:
@@ -81,11 +79,11 @@ class Crafted:
             crappy_pose_penalty = 8.0
 
         # skipping frames cost
-        skipped_frame_cost = 40.0 if track_frame else 0.0
+        skipped_frame_cost = 40.0 if track_frame < -1 else 0.0
 
         return (
             center_distance / 10.0
-            + kps_distance
+            + kps_distance_centered
             + crappy_track_penalty
             + crappy_pose_penalty
             + skipped_frame_cost

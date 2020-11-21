@@ -18,7 +18,7 @@ class Oks:
     inflate = 1.0
 
     def __init__(self):
-        self.valid_keypoint_mask = None
+        self.valid_keypoints = None
         self.sigmas = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
@@ -35,8 +35,7 @@ class Oks:
         area = (pose[:, 0].max() - pose[:, 0].min()) * (pose[:, 1].max() - pose[:, 1].min())
         return np.sqrt(area)
 
-    def distance(self, frame_number, pose, track, track_is_good, track_frame=None):
-        # TODO: incorporate track_is_good similarly to how it is done in crafted
+    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):
         last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0
@@ -44,19 +43,14 @@ class Oks:
             return 1000.0
 
         # correct track_frame with skipped_frames
-        if track_frame is not None:
-            track_frame += skipped_frames
-        else:
-            track_frame = -1
-
+        track_frame += skipped_frames
         if track_frame > -1:
             return 1000.0
-
-        if len(track.frame_pose) < -1.0 * track_frame:
+        if len(track.frame_pose) < -track_frame:
             return 1000.0
 
-        pose1 = pose.data[self.valid_keypoint_mask]
-        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoint_mask]
+        pose1 = pose.data[self.valid_keypoints]
+        pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoints]
         visible = np.logical_and(pose1[:, 2] > 0.05, pose2[:, 2] > 0.05)
         if not np.any(visible):
             return 1000.0
