@@ -4,7 +4,7 @@ import numpy as np
 class Euclidean:
     """Compute Euclidean distance between a track and a new pose candidate."""
 
-    invisible_penalty = 400.0
+    invisible_penalty = 110.0
 
     def __init__(self):
         self.valid_keypoints = None
