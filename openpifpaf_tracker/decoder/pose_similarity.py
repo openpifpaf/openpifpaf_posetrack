@@ -38,7 +38,7 @@ class PoseSimilarity(TrackBase):
     def cli(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group('PoseSimilarity')
         group.add_argument('--posesimilarity-distance',
-                           default='crafted', choices=('crafted', 'euclidean', 'oks'))
+                           default='crafted', choices=('crafted', 'euclidean', 'euclidean4', 'oks'))
         group.add_argument('--posesimilarity-oks-inflate',
                            default=pose_distance.Oks.inflate, type=float)
 
@@ -46,6 +46,8 @@ class PoseSimilarity(TrackBase):
     def configure(cls, args: argparse.Namespace):
         if args.posesimilarity_distance == 'euclidean':
             cls.distance_type = pose_distance.Euclidean
+        elif args.posesimilarity_distance == 'euclidean4':
+            cls.distance_type = lambda: pose_distance.Euclidean(track_frames=[-1, -4, -8, -12])
         elif args.posesimilarity_distance == 'oks':
             cls.distance_type = pose_distance.Oks
         elif args.posesimilarity_distance == 'crafted':

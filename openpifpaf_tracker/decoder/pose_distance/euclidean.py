@@ -6,16 +6,19 @@ class Euclidean:
 
     invisible_penalty = 110.0
 
-    def __init__(self):
+    def __init__(self, *, track_frames=None):
+        if track_frames is None:
+            track_frames = [-1]
+        assert all(t < 0 for t in track_frames)
+
         self.valid_keypoints = None
+        self.track_frames = track_frames
 
     def __call__(self, frame_number, pose, track, track_is_good):
-        return min((
-            self.distance(frame_number, pose, track, track_is_good),
-            self.distance(frame_number, pose, track, track_is_good, -4),
-            self.distance(frame_number, pose, track, track_is_good, -8),
-            self.distance(frame_number, pose, track, track_is_good, -12),
-        ))
+        return min(
+            self.distance(frame_number, pose, track, track_is_good, track_frame)
+            for track_frame in self.track_frames
+        )
 
     def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):
         last_track_frame = track.frame_pose[-1][0]
