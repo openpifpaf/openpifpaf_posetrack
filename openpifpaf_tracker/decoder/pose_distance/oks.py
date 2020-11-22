@@ -17,21 +17,24 @@ class Oks:
     """
     inflate = 1.0
 
-    def __init__(self):
+    def __init__(self, *, track_frames=None):
+        if track_frames is None:
+            track_frames = [-1]
+        assert all(t < 0 for t in track_frames)
+
+        self.track_frames = track_frames
         self.valid_keypoints = None
         self.sigmas = None
 
     def __call__(self, frame_number, pose, track, track_is_good):
-        return min((
-            self.distance(frame_number, pose, track, track_is_good),
-            self.distance(frame_number, pose, track, track_is_good, -4),
-            self.distance(frame_number, pose, track, track_is_good, -8),
-            self.distance(frame_number, pose, track, track_is_good, -12),
-        ))
+        return min(
+            self.distance(frame_number, pose, track, track_is_good, track_frame)
+            for track_frame in self.track_frames
+        )
 
     @staticmethod
     def scale(pose):
-        pose = pose[pose[:, 2] > 0.05]
+        pose = pose[pose[:, 2] > 0.0]
         area = (pose[:, 0].max() - pose[:, 0].min()) * (pose[:, 1].max() - pose[:, 1].min())
         return np.sqrt(area)
 
@@ -51,15 +54,14 @@ class Oks:
 
         pose1 = pose.data[self.valid_keypoints]
         pose2 = track.frame_pose[track_frame][1].data[self.valid_keypoints]
-        visible = np.logical_and(pose1[:, 2] > 0.05, pose2[:, 2] > 0.05)
+        visible = np.logical_and(pose1[:, 2] > 0.0, pose2[:, 2] > 0.0)
         if not np.any(visible):
             return 1000.0
         scale = 0.5 * (self.scale(pose1) + self.scale(pose2))
-        scale = max(0.1, scale)
+        scale = max(1.0, scale)
 
         d = np.linalg.norm((pose2[:, :2] - pose1[:, :2]), axis=1)
-        k = 2.0 * self.sigmas
-        k *= self.inflate
+        k = 2.0 * self.sigmas * self.inflate
         g = np.exp(-0.5 * d**2 / (scale**2 * k**2))
         oks = np.mean(g[visible])
 

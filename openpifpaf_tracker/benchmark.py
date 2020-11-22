@@ -101,13 +101,16 @@ def main():
         ablations += [
             Ablation('.euclidean', eval_args_decabl + ['--decoder=posesimilarity:0',
                                                        '--posesimilarity-distance=euclidean']),
-            Ablation('.crafted', eval_args_decabl + ['--decoder=posesimilarity:0',
-                                                     '--posesimilarity-distance=crafted']),
+            # Ablation('.crafted', eval_args_decabl + ['--decoder=posesimilarity:0',
+            #                                          '--posesimilarity-distance=crafted']),
             Ablation('.oks', eval_args_decabl + ['--decoder=posesimilarity:0',
                                                  '--posesimilarity-distance=oks']),
             Ablation('.oks-inflate2', eval_args_decabl + ['--decoder=posesimilarity:0',
                                                           '--posesimilarity-distance=oks',
                                                           '--posesimilarity-oks-inflate=2.0']),
+            Ablation('.oks-inflate10', eval_args_decabl + ['--decoder=posesimilarity:0',
+                                                           '--posesimilarity-distance=oks',
+                                                           '--posesimilarity-oks-inflate=10.0']),
         ]
     if args.ablation_4:
         ablations += [
