@@ -61,7 +61,7 @@ class Oks:
         scale = max(1.0, scale)
 
         d = np.linalg.norm((pose2[:, :2] - pose1[:, :2]), axis=1)
-        k = 2.0 * self.sigmas * self.inflate
+        k = 2.0 * self.sigmas[self.valid_keypoints] * self.inflate  # pylint: disable=unsubscriptable-object
         g = np.exp(-0.5 * d**2 / (scale**2 * k**2))
         oks = np.mean(g[visible])
 
