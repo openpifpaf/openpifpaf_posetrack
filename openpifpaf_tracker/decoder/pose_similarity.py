@@ -37,8 +37,8 @@ class PoseSimilarity(TrackBase):
     @classmethod
     def cli(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group('PoseSimilarity')
-        group.add_argument('--posesimilarity-distance',
-                           default='crafted', choices=('crafted', 'euclidean', 'euclidean4', 'oks'))
+        group.add_argument('--posesimilarity-distance', default='euclidean',
+                           choices=('crafted', 'euclidean', 'euclidean4', 'oks'))
         group.add_argument('--posesimilarity-oks-inflate',
                            default=pose_distance.Oks.inflate, type=float)
 
@@ -65,8 +65,8 @@ class PoseSimilarity(TrackBase):
             cls(cif_meta, caf_meta)
             for cif_meta, caf_meta
             in zip(head_metas, head_metas[1:])
-            if (isinstance(cif_meta, headmeta.TBaseCif)
-                and isinstance(caf_meta, headmeta.TBaseCaf))
+            if (isinstance(cif_meta, (headmeta.TBaseCif, openpifpaf.headmeta.Cif))
+                and isinstance(caf_meta, (headmeta.TBaseCaf, openpifpaf.headmeta.Caf)))
         ]
 
     def __call__(self, fields, *, initial_annotations=None):
