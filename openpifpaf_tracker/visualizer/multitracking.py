@@ -29,4 +29,7 @@ class MultiTracking(openpifpaf.visualizer.Base):
         with self.image_canvas(self._image) as ax:
             for frame_i, frame_anns in enumerate(self.anns):
                 alpha = 0.5**(len(self.anns) - 1 - frame_i)
+                if self._image_meta is not None:
+                    frame_anns = openpifpaf.transforms.Preprocess.annotations_inverse(
+                        frame_anns, self._image_meta)
                 self.annotation_painter.annotations(ax, frame_anns, alpha=alpha)
