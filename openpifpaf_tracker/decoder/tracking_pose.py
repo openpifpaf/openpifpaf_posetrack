@@ -197,9 +197,6 @@ class TrackingPose(TrackBase):
                 continue
             active_by_id[track_id].add(self.frame_number, single_frame_ann)
 
-        # visualize tracking pose with assigned track id
-        self.vis_multitracking.predicted(tracking_annotations)
-
         # nms tracks
         self.soft_nms(self.active, self.frame_number)
 
@@ -210,11 +207,14 @@ class TrackingPose(TrackBase):
         # pruning lost tracks
         self.active = [t for t in self.active if self.track_is_viable(t, self.frame_number)]
 
+        good_tracks = {t.id_ for t in self.active if self.track_is_good(t, self.frame_number)}
         LOG.info('active tracks = %d, good = %d, track ids = %s',
-                 len(self.active),
-                 len([t for t in self.active if self.track_is_good(t, self.frame_number)]),
+                 len(self.active), len(good_tracks),
                  [self.simplified_track_id_map.get(t.id_, t.id_)
                   for t in self.active])
+
+        # visualize good tracking poses with assigned track id
+        self.vis_multitracking.predicted([t for t in tracking_annotations if t.id_ in good_tracks])
         # if self.track_visualizer or self.track_ann_visualizer:
         #     good_ids = set(t.id_ for t in self.active if self.track_is_good(t, self.frame_number))
         #     good_tracking_anns = [t for t in tracking_annotations
