@@ -21,6 +21,13 @@ class TrackingPose(TrackBase):
         self.caf_meta = caf_meta
         self.tcaf_meta = tcaf_meta
 
+        # a similar selector exists for pose similarity
+        self.invalid_keypoints = [
+            i
+            for i, kp in enumerate(cif_meta.keypoints)
+            if kp in ('left_ear', 'right_ear')
+        ]
+
         self.n_keypoints = len(cif_meta.keypoints)
         tracking_keypoints = cif_meta.keypoints * len(self.cache_group)
         tracking_sigmas = cif_meta.sigmas * len(self.cache_group)
@@ -85,6 +92,7 @@ class TrackingPose(TrackBase):
                 continue
             kps = frame_ann.data
             kps[kps[:, 2] < openpifpaf.decoder.utils.nms.Keypoints.keypoint_threshold] = 0.0
+            kps[self.invalid_keypoints] = 0.0
 
         occupied = openpifpaf.decoder.utils.Occupancy((
             self.n_keypoints,
