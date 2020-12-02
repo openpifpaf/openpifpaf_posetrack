@@ -8,7 +8,7 @@ LOG = logging.getLogger(__name__)
 class MultiTracking(openpifpaf.visualizer.Base):
     show = False
 
-    instance_threshold = 0.2
+    instance_threshold = 0.05
     trail_length = 10
 
     def __init__(self, meta: openpifpaf.headmeta.Caf):
@@ -27,5 +27,6 @@ class MultiTracking(openpifpaf.visualizer.Base):
             self.anns.pop(0)
 
         with self.image_canvas(self._processed_image) as ax:
-            for frame_anns in self.anns:
-                self.annotation_painter.annotations(ax, frame_anns)
+            for frame_i, frame_anns in enumerate(self.anns):
+                alpha = 0.5**(len(self.anns) - 1 - frame_i)
+                self.annotation_painter.annotations(ax, frame_anns, alpha=alpha)
