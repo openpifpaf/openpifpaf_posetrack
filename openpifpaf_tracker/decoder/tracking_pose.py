@@ -62,15 +62,6 @@ class TrackingPose(TrackBase):
         self.vis_multitracking = visualizer.MultiTracking(self.tracking_caf_meta)
 
     @classmethod
-    def cli(cls, parser):
-        group = parser.add_argument_group('trackingpose decoder')
-        group.add_argument('--show-multitracking', default=False, action='store_true')
-
-    @classmethod
-    def configure(cls, args):
-        visualizer.MultiTracking.show = args.show_multitracking
-
-    @classmethod
     def factory(cls, head_metas):
         if len(head_metas) < 4:
             return []
@@ -207,14 +198,15 @@ class TrackingPose(TrackBase):
         # pruning lost tracks
         self.active = [t for t in self.active if self.track_is_viable(t, self.frame_number)]
 
-        good_tracks = {t.id_ for t in self.active if self.track_is_good(t, self.frame_number)}
+        good_track_ids = {t.id_ for t in self.active if self.track_is_good(t, self.frame_number)}
         LOG.info('active tracks = %d, good = %d, track ids = %s',
-                 len(self.active), len(good_tracks),
+                 len(self.active), len(good_track_ids),
                  [self.simplified_track_id_map.get(t.id_, t.id_)
                   for t in self.active])
 
         # visualize good tracking poses with assigned track id
-        self.vis_multitracking.predicted([t for t in tracking_annotations if t.id_ in good_tracks])
+        good_track_annotations = [t for t in tracking_annotations if t.id_ in good_track_ids]
+        self.vis_multitracking.predicted(good_track_annotations)
         # if self.track_visualizer or self.track_ann_visualizer:
         #     good_ids = set(t.id_ for t in self.active if self.track_is_good(t, self.frame_number))
         #     good_tracking_anns = [t for t in tracking_annotations

@@ -6,18 +6,18 @@ LOG = logging.getLogger(__name__)
 
 
 class MultiTracking(openpifpaf.visualizer.Base):
-    show = False
     trail_length = 10
 
     def __init__(self, meta: openpifpaf.headmeta.Caf):
-        super().__init__(meta.name)
+        super().__init__('multi_' + meta.name)
+        LOG.debug('vis %s', 'multi_' + meta.name)
         self.meta = meta
         self.annotation_painter = openpifpaf.show.AnnotationPainter()
 
         self.anns = []
 
     def predicted(self, anns):
-        if not self.show:
+        if not self.indices:
             return
 
         self.anns.append(anns)
