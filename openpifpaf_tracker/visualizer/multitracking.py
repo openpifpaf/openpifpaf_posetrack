@@ -26,7 +26,7 @@ class MultiTracking(openpifpaf.visualizer.Base):
         if len(self.anns) > self.trail_length:
             self.anns.pop(0)
 
-        with self.image_canvas(self._processed_image) as ax:
+        with self.image_canvas(self._image) as ax:
             for frame_i, frame_anns in enumerate(self.anns):
                 alpha = 0.5**(len(self.anns) - 1 - frame_i)
                 self.annotation_painter.annotations(ax, frame_anns, alpha=alpha)
