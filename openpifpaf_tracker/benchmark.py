@@ -48,12 +48,12 @@ def cli():
 
     # default eval_args
     if not eval_args:
-        eval_args = ['--loader-workers=8']
+        eval_args = ['--loader-workers=2']
 
     # default loader workers
     if not any(l.startswith('--loader-workers') for l in eval_args):
-        LOG.info('adding "--loader-workers=8" to the argument list')
-        eval_args.append('--loader-workers=8')
+        LOG.info('adding "--loader-workers=2" to the argument list')
+        eval_args.append('--loader-workers=2')
 
     # default dataset
     if not any(l.startswith('--dataset') for l in eval_args):
@@ -128,8 +128,6 @@ def main():
         ablations += [
             Ablation('.euclidean', eval_args_decabl + ['--decoder=posesimilarity:0',
                                                        '--posesimilarity-distance=euclidean']),
-            # Ablation('.crafted', eval_args_decabl + ['--decoder=posesimilarity:0',
-            #                                          '--posesimilarity-distance=crafted']),
             Ablation('.oks', eval_args_decabl + ['--decoder=posesimilarity:0',
                                                  '--posesimilarity-distance=oks']),
             Ablation('.oks-inflate2', eval_args_decabl + ['--decoder=posesimilarity:0',
