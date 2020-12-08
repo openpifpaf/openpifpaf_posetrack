@@ -34,6 +34,7 @@ def cli():
                         help='output file name')
     parser.add_argument('--checkpoints', default=DEFAULT_CHECKPOINTS, nargs='+',
                         help='checkpoints to evaluate')
+    parser.add_argument('--crowdpose', default=False, action='store_true')
     parser.add_argument('--ablation-1', default=False, action='store_true')
     parser.add_argument('--ablation-2', default=False, action='store_true')
     parser.add_argument('--ablation-3', default=False, action='store_true')
@@ -56,11 +57,30 @@ def cli():
 
     # default dataset
     if not any(l.startswith('--dataset') for l in eval_args):
-        LOG.info('adding "--dataset=posetrack2018" to the argument list')
-        eval_args.append('--dataset=posetrack2018')
-        if not any(l.startswith('--write-predictions') for l in eval_args):
-            LOG.info('adding "--write-predictions" to the argument list')
-            eval_args.append('--write-predictions')
+        if args.crowdpose:
+            LOG.info('adding "--dataset=crowdpose" to the argument list')
+            eval_args.append('--dataset=crowdpose')
+            if not any(l.startswith('--force-complete-pose') for l in eval_args):
+                LOG.info('adding "--force-complete-pose" to the argument list')
+                eval_args.append('--force-complete-pose')
+            if not any(l.startswith('--seed-threshold') for l in eval_args):
+                LOG.info('adding "--seed-threshold=0.2" to the argument list')
+                eval_args.append('--seed-threshold=0.2')
+            if not any(l.startswith('--crowdpose-eval-test') for l in eval_args):
+                LOG.info('adding "--crowdpose-eval-test" to the argument list')
+                eval_args.append('--crowdpose-eval-test')
+            if not any(l.startswith('--decoder') for l in eval_args):
+                LOG.info('adding "--decoder=cifcaf:0" to the argument list')
+                eval_args.append('--decoder=cifcaf:0')
+        else:
+            LOG.info('adding "--dataset=posetrack2018" to the argument list')
+            eval_args.append('--dataset=posetrack2018')
+            if not any(l.startswith('--write-predictions') for l in eval_args):
+                LOG.info('adding "--write-predictions" to the argument list')
+                eval_args.append('--write-predictions')
+            if not any(l.startswith('--decoder') for l in eval_args):
+                LOG.info('adding "--decoder=trackingpose:0" to the argument list')
+                eval_args.append('--decoder=trackingpose:0')
 
     # generate a default output filename
     if args.output is None:
@@ -72,10 +92,17 @@ def cli():
 
 
 def main():
-    args, eval_args_no_decoder = cli()
-    eval_args = eval_args_no_decoder + ['--decoder=trackingpose:0']
+    args, eval_args = cli()
     Ablation = namedtuple('Ablation', ['suffix', 'args'])
     ablations = [Ablation('', eval_args)]
+
+    if args.crowdpose:
+        assert all('crowdpose' in c for c in args.checkpoints)
+        ablations += [
+            Ablation('.easy', eval_args + ['--crowdpose-index=easy']),
+            Ablation('.medium', eval_args + ['--crowdpose-index=medium']),
+            Ablation('.hard', eval_args + ['--crowdpose-index=hard']),
+        ]
 
     if args.ablation_1:
         ablations += [
@@ -95,8 +122,8 @@ def main():
     if args.ablation_3:
         eval_args_decabl = [
             arg
-            for arg in eval_args_no_decoder
-            if not arg.startswith('--instance-threshold=')
+            for arg in eval_args
+            if not arg.startswith(('--instance-threshold=', '--decoder='))
         ]
         ablations += [
             Ablation('.euclidean', eval_args_decabl + ['--decoder=posesimilarity:0',
