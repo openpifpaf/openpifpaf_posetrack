@@ -152,7 +152,8 @@ def main():
     openpifpaf.benchmark.Benchmark(
         configs,
         args.output,
-        reference_config=configs[0] if len(args.checkpoints) == 1 else None,
+        reference_config=configs[0] if len(args.checkpoints) == 1 and not args.crowdpose else None,
+        stat_scale=100.0 if args.crowdpose else 1.0,
     ).run()
 
 
