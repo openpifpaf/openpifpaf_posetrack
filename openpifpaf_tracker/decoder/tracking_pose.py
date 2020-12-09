@@ -1,3 +1,4 @@
+import argparse
 import logging
 import time
 
@@ -14,6 +15,7 @@ LOG = logging.getLogger(__name__)
 class TrackingPose(TrackBase):
     cache_group = [0, -1]
     forward_tracking_pose = True
+    track_recovery = False
 
     def __init__(self, cif_meta, caf_meta, tcaf_meta, *, pose_generator=None):
         super().__init__()
@@ -67,6 +69,16 @@ class TrackingPose(TrackBase):
                   openpifpaf.decoder.CifCaf.nms)
 
         self.vis_multitracking = visualizer.MultiTracking(self.tracking_caf_meta)
+
+    @classmethod
+    def cli(cls, parser: argparse.ArgumentParser):
+        group = parser.add_argument_group('trackingpose decoder')
+        assert not cls.track_recovery
+        group.add_argument('--trackingpose-track-recovery', default=False, action='store_true')
+
+    @classmethod
+    def configure(cls, args: argparse.Namespace):
+        cls.track_recovery = args.trackingpose_track_recovery
 
     @classmethod
     def factory(cls, head_metas):
@@ -181,6 +193,8 @@ class TrackingPose(TrackBase):
 
         # extract new pose annotations from tracking pose
         active_by_id = {t.id_: t for t in self.active}
+        lost_trackids = {t.id_: t.frame_pose[-1][0] for t in self.active
+                         if t.frame_pose[-1][0] < self.frame_number - 1}
         for tracking_ann in tracking_annotations:
             single_frame_ann = openpifpaf.Annotation(
                 self.cif_meta.keypoints, self.caf_meta.skeleton)
@@ -188,6 +202,11 @@ class TrackingPose(TrackBase):
             single_frame_ann.joint_scales = tracking_ann.joint_scales[:self.n_keypoints]
 
             track_id = getattr(tracking_ann, 'id_', -1)
+            if track_id == -1 and self.track_recovery and lost_trackids:
+                track_id = max(lost_trackids.items(), key=lambda d: d[1])[0]
+                del lost_trackids[track_id]
+                tracking_ann.id_ = track_id
+                LOG.info('recovered track %d', track_id)
             if track_id == -1:
                 new_track = TrackAnnotation().add(self.frame_number, single_frame_ann)
                 self.active.append(new_track)
