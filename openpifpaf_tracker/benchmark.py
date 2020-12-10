@@ -39,6 +39,7 @@ def cli():
     parser.add_argument('--ablation-2', default=False, action='store_true')
     parser.add_argument('--ablation-3', default=False, action='store_true')
     parser.add_argument('--ablation-4', default=False, action='store_true')
+    parser.add_argument('--ablation-5', default=False, action='store_true')
     group = parser.add_argument_group('logging')
     group.add_argument('--debug', default=False, action='store_true',
                        help='print debug messages')
@@ -142,6 +143,10 @@ def main():
             Ablation('.w513', eval_args + ['--posetrack-eval-long-edge=513']),
             Ablation('.w641', eval_args + ['--posetrack-eval-long-edge=641']),
             Ablation('.w1201', eval_args + ['--posetrack-eval-long-edge=1201']),
+        ]
+    if args.ablation_5:
+        ablations += [
+            Ablation('.recovery', eval_args + ['--trackingpose-track-recovery']),
         ]
 
     configs = [
