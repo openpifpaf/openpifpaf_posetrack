@@ -7,7 +7,7 @@ import os
 import openpifpaf
 import torch
 
-from . import backbone
+from . import backbone, __version__
 
 LOG = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ def cli():
     if args.output is None:
         basename = 't' + os.path.basename(args.checkpoint)
         if not basename.endswith('.pkl'):
-            basename += '.pkl'
+            basename += '-{}-{}.pkl'.format(openpifpaf.__version__, __version__)
         args.output = os.path.join('outputs', basename)
 
     return args

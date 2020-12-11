@@ -45,9 +45,13 @@ def register():
     openpifpaf.DATAMODULES['cocokpst'] = CocoKpSt
 
     # TODO resolve conflicting names: TBase TBackbone
-    openpifpaf.HEAD_FACTORIES[headmeta.TBaseCif] = heads.TBaseSingleImage
-    openpifpaf.HEAD_FACTORIES[headmeta.TBaseCaf] = heads.TBaseSingleImage
-    openpifpaf.HEAD_FACTORIES[headmeta.Tcaf] = heads.Tcaf
+    openpifpaf.HEADS[headmeta.TBaseCif] = heads.TBaseSingleImage
+    openpifpaf.HEADS[headmeta.TBaseCaf] = heads.TBaseSingleImage
+    openpifpaf.HEADS[headmeta.Tcaf] = heads.Tcaf
+
+    openpifpaf.LOSSES[headmeta.TBaseCif] = openpifpaf.network.losses.CompositeLoss
+    openpifpaf.LOSSES[headmeta.TBaseCaf] = openpifpaf.network.losses.CompositeLoss
+    openpifpaf.LOSSES[headmeta.Tcaf] = openpifpaf.network.losses.CompositeLoss
 
     openpifpaf.BASE_TYPES.add(TBackbone)
     openpifpaf.BASE_FACTORIES['tshufflenetv2k16'] = lambda: TBackbone(

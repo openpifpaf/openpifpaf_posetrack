@@ -20,19 +20,20 @@ unzip images.zip
 # Train posetrack2018-cocokpst
 
 ```sh
-python3 -m openpifpaf_tracker.imagetotracking \
-  --checkpoint ../pifpaf_run/outputs/shufflenetv2k16-201008-120711-cocokp-o10s-58034177.pkl
+python3 -m openpifpaf_tracker.imagetotracking --checkpoint shufflenetv2k30
 ```
 
 ```sh
-# 201208
+# 201210
 time CUDA_VISIBLE_DEVICES=0,1 python3 -m openpifpaf.train \
-  --lr=0.0001 --momentum=0.95 --b-scale=3.0 --dataset-weights 1 1 --stride-apply=2 \
+  --lr=0.0001 --momentum=0.95 --b-scale=3.0 \
   --epochs=50 --lr-decay 40 45 --lr-decay-epochs=5 \
   --batch-size=32 \
   --weight-decay=1e-5 \
-  --dataset=posetrack2018-cocokpst --posetrack-upsample=2 --posetrack-bmin=2 --cocokp-upsample=2 --cocokp-bmin=2 --cocokp-orientation-invariant=0.5 --cocokp-blur=0.1 \
-  --checkpoint ...
+  --dataset=posetrack2018-cocokpst --dataset-weights 1 1 --stride-apply=2 \
+  --posetrack-upsample=2 --posetrack-bmin=2 \
+  --cocokp-upsample=2 --cocokp-bmin=2 --cocokp-orientation-invariant=0.5 --cocokp-blur=0.1 \
+  --checkpoint outputs/tshufflenetv2k30.pkl
 ```
 
 ```sh
