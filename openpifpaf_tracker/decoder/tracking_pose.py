@@ -202,11 +202,6 @@ class TrackingPose(TrackBase):
             single_frame_ann.joint_scales = tracking_ann.joint_scales[:self.n_keypoints]
 
             track_id = getattr(tracking_ann, 'id_', -1)
-            if track_id == -1 and self.track_recovery and lost_trackids:
-                track_id = max(lost_trackids.items(), key=lambda d: d[1])[0]
-                del lost_trackids[track_id]
-                tracking_ann.id_ = track_id
-                LOG.info('recovered track %d', track_id)
             if track_id == -1:
                 new_track = TrackAnnotation().add(self.frame_number, single_frame_ann)
                 self.active.append(new_track)
@@ -217,6 +212,25 @@ class TrackingPose(TrackBase):
 
         # nms tracks
         self.soft_nms(self.active, self.frame_number)
+
+        # track recovery
+        if self.track_recovery:
+            removed = set()
+            for track in self.active:
+                if not lost_trackids:
+                    break
+                if len(track) > 1:
+                    continue
+                if track.pose(self.frame_number) is None:
+                    continue
+
+                track_id = max(lost_trackids.items(), key=lambda d: d[1])[0]
+                del lost_trackids[track_id]
+                # tracking_ann.id_ = track_id
+                active_by_id[track_id].add(self.frame_number, track.pose(self.frame_number))
+                removed.add(track)
+                LOG.info('recovered track %d', track_id)
+            self.active = [t for t in self.active if t not in removed]
 
         # tag ignore regions
         # if self.gt_anns:  TODO
