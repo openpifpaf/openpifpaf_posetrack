@@ -7,7 +7,9 @@ from .posetrack2018 import KEYPOINTS, SKELETON, SIGMAS, UPRIGHT_POSE
 
 def main():
     openpifpaf.show.KeypointPainter.show_joint_scales = True
-    keypoint_painter = openpifpaf.show.KeypointPainter(color_connections=True, linewidth=6)
+    openpifpaf.show.KeypointPainter.line_width = 6
+    openpifpaf.show.KeypointPainter.monocolor_connections = False
+    keypoint_painter = openpifpaf.show.KeypointPainter()
 
     scale = np.sqrt(
         (np.max(UPRIGHT_POSE[:, 0]) - np.min(UPRIGHT_POSE[:, 0]))
@@ -36,6 +38,18 @@ def main():
     )
     openpifpaf.plugins.coco.constants.draw_ann(
         ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_tracking2.png')
+
+    tracking2_skeleton_forward = np.concatenate([
+        np.array([(j, j + 17) for j in range(1, 18)]),
+        np.array(SKELETON),
+    ])
+    ann = openpifpaf.Annotation(KEYPOINTS + KEYPOINTS, tracking2_skeleton_forward)
+    ann.set(
+        upright_pose_2tracking,
+        sigmas_2tracking,
+    )
+    openpifpaf.plugins.coco.constants.draw_ann(
+        ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_tracking2_forward.png')
 
 
 if __name__ == '__main__':
