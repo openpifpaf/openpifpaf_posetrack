@@ -53,6 +53,11 @@ class Tcaf(openpifpaf.network.HeadNetwork):
                             kernel_size=1, bias=True),
             torch.nn.ReLU(inplace=True),
         )
+        self.feature_compute = torch.nn.Sequential(
+            torch.nn.Conv2d(self.reduced_features * 2, self.reduced_features * 2,
+                            kernel_size=1, bias=True),
+            torch.nn.ReLU(inplace=True),
+        )
         self.head = openpifpaf.network.heads.CompositeField3(meta, self.reduced_features * 2)
 
     def forward(self, *args):
@@ -65,8 +70,7 @@ class Tcaf(openpifpaf.network.HeadNetwork):
         if len(x) % 2 == 1:
             return None
 
-        if self.feature_reduction:
-            x = self.feature_reduction(x)
+        x = self.feature_reduction(x)
 
         group_length = 2 if self.training else self.tracking_pose_length
         primary = x[::group_length]
@@ -75,6 +79,8 @@ class Tcaf(openpifpaf.network.HeadNetwork):
         x = torch.stack([torch.cat([primary, o], dim=1) for o in others], dim=1)
         x_shape = x.size()
         x = torch.reshape(x, [x_shape[0] * x_shape[1]] + list(x_shape[2:]))
+
+        x = self.feature_compute(x)
 
         x = self.head(x)
 
