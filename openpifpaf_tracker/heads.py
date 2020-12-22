@@ -46,18 +46,28 @@ class Tcaf(openpifpaf.network.HeadNetwork):
     tracking_pose_length = 2
     reduced_features = 512
 
+    _global_feature_reduction = None
+    _global_feature_compute = None
+
     def __init__(self, meta, in_features):
         super().__init__(meta, in_features)
-        self.feature_reduction = torch.nn.Sequential(
-            torch.nn.Conv2d(in_features, self.reduced_features,
-                            kernel_size=1, bias=True),
-            torch.nn.ReLU(inplace=True),
-        )
-        self.feature_compute = torch.nn.Sequential(
-            torch.nn.Conv2d(self.reduced_features * 2, self.reduced_features * 2,
-                            kernel_size=1, bias=True),
-            torch.nn.ReLU(inplace=True),
-        )
+
+        if self._global_feature_reduction is None:
+            self.__class__._global_feature_reduction = torch.nn.Sequential(
+                torch.nn.Conv2d(in_features, self.reduced_features,
+                                kernel_size=1, bias=True),
+                torch.nn.ReLU(inplace=True),
+            )
+        self.feature_reduction = self._global_feature_reduction
+
+        if self._global_feature_compute is None:
+            self.__class__._global_feature_compute = torch.nn.Sequential(
+                torch.nn.Conv2d(self.reduced_features * 2, self.reduced_features * 2,
+                                kernel_size=1, bias=True),
+                torch.nn.ReLU(inplace=True),
+            )
+        self.feature_compute = self._global_feature_compute
+
         self.head = openpifpaf.network.heads.CompositeField3(meta, self.reduced_features * 2)
 
     def forward(self, *args):
