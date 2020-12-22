@@ -51,6 +51,29 @@ def main():
     openpifpaf.plugins.coco.constants.draw_ann(
         ann, keypoint_painter=keypoint_painter, filename='docs/skeleton_tracking2_forward.png')
 
+    # COCO
+    coco_keypoints = openpifpaf.plugins.coco.constants.COCO_KEYPOINTS
+    coco_skeleton = openpifpaf.plugins.coco.constants.COCO_PERSON_SKELETON
+    coco_skeleton_forward = np.concatenate([
+        np.array([(j, j + 17) for j in range(1, 18)]),
+        np.array(coco_skeleton),
+    ])
+    coco_upright_pose_2tracking = np.concatenate([
+        openpifpaf.plugins.coco.constants.COCO_UPRIGHT_POSE,
+        0.9 * openpifpaf.plugins.coco.constants.COCO_UPRIGHT_POSE + np.array([-1.5, 1.5, 0.0]),
+    ])
+    coco_sigmas_2tracking = np.concatenate([
+        np.array(openpifpaf.plugins.coco.constants.COCO_PERSON_SIGMAS) * scale,
+        0.8 * np.array(openpifpaf.plugins.coco.constants.COCO_PERSON_SIGMAS) * scale,
+    ])
+    ann = openpifpaf.Annotation(coco_keypoints + coco_keypoints, coco_skeleton_forward)
+    ann.set(
+        coco_upright_pose_2tracking,
+        coco_sigmas_2tracking,
+    )
+    openpifpaf.plugins.coco.constants.draw_ann(
+        ann, keypoint_painter=keypoint_painter, filename='docs/coco_skeleton_forward.png')
+
 
 if __name__ == '__main__':
     main()
