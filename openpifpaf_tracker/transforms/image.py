@@ -11,7 +11,7 @@ LOG = logging.getLogger(__name__)
 
 
 class HorizontalBlur(openpifpaf.transforms.Preprocess):
-    def __init__(self, sigma=15.0):
+    def __init__(self, sigma=5.0):
         self.sigma = sigma
 
     def __call__(self, image, anns, meta):
