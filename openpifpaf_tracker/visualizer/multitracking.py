@@ -14,23 +14,26 @@ class MultiTracking(openpifpaf.visualizer.Base):
         self.meta = meta
         self.annotation_painter = openpifpaf.show.AnnotationPainter()
 
-        self.anns = []
+        self.anns_trail = []
 
     def predicted(self, anns):
         if not self.indices:
             return
 
-        self.anns.append(anns)
-        if len(self.anns) > self.trail_length:
-            self.anns.pop(0)
+        self.anns_trail.append(anns)
+        if len(self.anns_trail) > self.trail_length:
+            self.anns_trail.pop(0)
 
-        current_ids = {ann.id_ for ann in self.anns[-1]}
+        current_ids = {ann.id_ for ann in self.anns_trail[-1]}
         with self.image_canvas(self._image) as ax:
-            for frame_i, frame_anns in enumerate(self.anns):
+            for frame_i, frame_anns in enumerate(self.anns_trail):
                 # only show trails for poses that are in the current frame
                 frame_anns = [ann for ann in frame_anns if ann.id_ in current_ids]
 
-                alpha = 0.5**(len(self.anns) - 1 - frame_i)
+                # only show trails for poses that have confidence > 0.01
+                frame_anns = [ann for ann in frame_anns if ann.score() > 0.01]
+
+                alpha = 0.5**(len(self.anns_trail) - 1 - frame_i)
                 if self._image_meta is not None:
                     frame_anns = openpifpaf.transforms.Preprocess.annotations_inverse(
                         frame_anns, self._image_meta)
