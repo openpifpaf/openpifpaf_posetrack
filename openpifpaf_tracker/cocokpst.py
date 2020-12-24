@@ -114,6 +114,8 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             rescale_t,
             openpifpaf.transforms.RandomApply(openpifpaf.transforms.Blur(),
                                               openpifpaf.plugins.coco.CocoKp.blur),
+            openpifpaf.transforms.RandomApply(transforms.HorizontalBlur(),
+                                              openpifpaf.plugins.coco.CocoKp.blur),
             transforms.ImageToTracking(),
             transforms.Crop(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
             transforms.Pad(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
