@@ -1,5 +1,6 @@
 from collections import defaultdict
 import datetime
+import glob
 import json
 import logging
 import os
@@ -114,32 +115,50 @@ class Posetrack(openpifpaf.metric.Base):
             else:
                 raise NotImplementedError
 
+        if self.ground_truth_directory is None:
+            return
+
         # use poseval to evaluate right away
-        if self.ground_truth_directory is not None:
-            gt_dir = os.path.dirname(self.ground_truth_directory)
-            if not gt_dir.endswith('/'):
-                gt_dir = gt_dir + '/'
+        gt_dir = os.path.dirname(self.ground_truth_directory)
+        if not gt_dir.endswith('/'):
+            gt_dir = gt_dir + '/'
 
-            pred_dir = output_dir
-            if not pred_dir.endswith('/'):
-                pred_dir = pred_dir + '/'
+        pred_dir = output_dir
+        if not pred_dir.endswith('/'):
+            pred_dir = pred_dir + '/'
 
-            out_dir = output_dir
-            if out_dir.endswith('/'):
-                out_dir = out_dir[:-1]
-            out_dir = out_dir + '-poseval/'
+        out_dir = output_dir
+        if out_dir.endswith('/'):
+            out_dir = out_dir[:-1]
+        out_dir = out_dir + '-poseval/'
 
-            cmd = [
-                'python', '-m', 'poseval.evaluate',
-                '--groundTruth', gt_dir,
-                '--predictions', pred_dir,
-                '--outputDir', out_dir,
-                '--evalPoseTracking',
-                '--evalPoseEstimation',
-                '--saveEvalPerSequence',
-            ]
-            LOG.info('eval command: %s', ' '.join(cmd))
-            subprocess.run(cmd, check=True)
+        cmd = [
+            'python', '-m', 'poseval.evaluate',
+            '--groundTruth', gt_dir,
+            '--predictions', pred_dir,
+            '--outputDir', out_dir,
+            '--evalPoseTracking',
+            '--evalPoseEstimation',
+            '--saveEvalPerSequence',
+        ]
+        LOG.info('eval command: %s', ' '.join(cmd))
+        subprocess.run(cmd, check=True)
+        self.print_by_sequence(out_dir)
 
-            self._written_mot_stats_file = os.path.join(out_dir, 'total_MOT_metrics.json')
-            self._written_ap_stats_file = os.path.join(out_dir, 'total_AP_metrics.json')
+        self._written_mot_stats_file = os.path.join(out_dir, 'total_MOT_metrics.json')
+        self._written_ap_stats_file = os.path.join(out_dir, 'total_AP_metrics.json')
+
+    @staticmethod
+    def print_by_sequence(out_dir):
+        mot_files = glob.glob(os.path.join(out_dir, '*_MOT_metrics.json'))
+
+        mota = {}
+        for file_name in mot_files:
+            with open(file_name, 'r') as f:
+                d = json.load(f)
+            identifier = os.path.basename(file_name).replace('_MOT_metrics.json', '')
+            mota[identifier] = d.get('mota', [-1.0])[-1]
+
+        print('sequence, mota')
+        for sequence, m in sorted(mota.items(), key=lambda x: x[1]):
+            print(sequence, m)
