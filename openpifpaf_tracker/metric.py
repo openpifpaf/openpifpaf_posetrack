@@ -71,6 +71,13 @@ class Posetrack(openpifpaf.metric.Base):
         for ann in predictions:
             keypoints = np.copy(ann.data)
 
+            # remove points outside image
+            w, h = image_meta['width_height']
+            keypoints[keypoints[:, 0] < 0.0, 2] = 0.0
+            keypoints[keypoints[:, 1] < 0.0, 2] = 0.0
+            keypoints[keypoints[:, 0] > w - 1, 2] = 0.0
+            keypoints[keypoints[:, 1] > h - 1, 2] = 0.0
+
             # cleanup
             keypoints[:, 2] = np.clip(keypoints[:, 2], 0.0, 1.0)
             keypoints[keypoints[:, 2] == 0.0, :2] = 0.0
