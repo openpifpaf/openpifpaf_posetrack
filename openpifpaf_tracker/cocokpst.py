@@ -110,7 +110,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         return openpifpaf.transforms.Compose([
             openpifpaf.transforms.NormalizeAnnotations(),
             transforms.ImageToTracking(),
-            openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.2),
+            openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.3),
             S(openpifpaf.transforms.RandomApply(
                 openpifpaf.transforms.HFlip(COCO_KEYPOINTS, HFLIP), 0.5)),
             S(rescale_t),
