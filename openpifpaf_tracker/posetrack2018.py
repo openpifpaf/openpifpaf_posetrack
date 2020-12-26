@@ -272,7 +272,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
             openpifpaf.plugins.coco.constants.HFLIP)
         return openpifpaf.transforms.Compose([
             S(transforms.NormalizePosetrack()),
-            openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.3),
+            openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.2),
             S(transforms.AddCrowdForIncompleteHead()),
             S(openpifpaf.transforms.RandomApply(hflip_posetrack, 0.5)),
             S(openpifpaf.transforms.RescaleRelative(
