@@ -57,8 +57,8 @@ class PreviousPast(openpifpaf.transforms.Preprocess):
 
 class RandomizeOneFrame(openpifpaf.transforms.Preprocess):
     def __init__(self):
-        self.previous_image = PIL.Image.new('RGB', (320, 240), (127, 127, 127))
-        # self.previous_meta_image = {'frame_id': -1, 'file_name': 'blank'}
+        self.previous_image = None
+        self.previous_meta = None
         self.previous_annotations = []
 
     def __call__(self, images, all_anns, metas):
@@ -67,17 +67,24 @@ class RandomizeOneFrame(openpifpaf.transforms.Preprocess):
 
         replace_index = random.randrange(0, len(metas))
 
-        # image
-        images[replace_index] = self.previous_image
+        if self.previous_image is not None:
+            # image
+            images[replace_index] = self.previous_image
 
-        # annotations
-        all_anns[replace_index] = []  # TODO assumes previous image has nothing to do with current
+            # annotations
+            all_anns[replace_index] = copy.deepcopy(self.previous_annotations)
+            if self.previous_meta.get('annotation_file', 0) \
+               == metas[replace_index].get('annotation_file', 1):
+                pass
+            else:
+                for ann in all_anns[replace_index]:
+                    ann['track_id'] += 10000
 
-        # meta
-        # metas[replace_index]['image'] = self.previous_meta_image
+            # meta
+            metas[replace_index] = self.previous_meta
 
         not_replaced_index = 0 if replace_index != 0 else 1
         self.previous_image = images[not_replaced_index]
         self.previous_annotations = all_anns[not_replaced_index]
-        # self.previous_meta_image = metas[not_replaced_index]['image']
+        self.previous_meta = metas[not_replaced_index]
         return images, all_anns, metas
