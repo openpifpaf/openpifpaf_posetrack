@@ -20,9 +20,10 @@ class Crop(openpifpaf.transforms.Preprocess):
         all_anns = copy.deepcopy(all_anns)
 
         if self.use_area_of_interest:
-            flat_anns = [ann for anns in all_anns for ann in anns]
+            # crop around the interesting area in the past frame to
+            # train whether the pose continues or not
             area_of_interest = self.area_of_interest(
-                flat_anns, metas[0]['valid_area'], self.long_edge)
+                all_anns[1], metas[1]['valid_area'], self.long_edge)
         else:
             area_of_interest = metas[0]['valid_area']
 
