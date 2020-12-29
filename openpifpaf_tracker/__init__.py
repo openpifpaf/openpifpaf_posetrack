@@ -26,6 +26,17 @@ def subscribe_cache_reset(model):
         Signal.subscribe('eval_reset', m.reset)
 
 
+def tcaf_shared_preprocessing(model):
+    for m in model.modules():
+        if not isinstance(m, heads.Tcaf):
+            continue
+
+        # pylint: disable=protected-access
+        heads.Tcaf._global_feature_reduction = m.feature_reduction
+        heads.Tcaf._global_feature_compute = m.feature_compute
+        return
+
+
 def register():
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (
         'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a5/'
@@ -66,3 +77,4 @@ def register():
 
     openpifpaf.MODEL_MIGRATION.add(fix_feature_cache)
     openpifpaf.MODEL_MIGRATION.add(subscribe_cache_reset)
+    openpifpaf.MODEL_MIGRATION.add(tcaf_shared_preprocessing)
