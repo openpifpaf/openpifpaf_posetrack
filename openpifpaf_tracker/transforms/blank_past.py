@@ -72,7 +72,7 @@ class RandomizeOneFrame(openpifpaf.transforms.Preprocess):
             images[replace_index] = self.previous_image
 
             # annotations
-            all_anns[replace_index] = copy.deepcopy(self.previous_annotations)
+            all_anns[replace_index] = self.previous_annotations
             if self.previous_meta.get('annotation_file', 0) \
                == metas[replace_index].get('annotation_file', 1):
                 pass
@@ -84,7 +84,7 @@ class RandomizeOneFrame(openpifpaf.transforms.Preprocess):
             metas[replace_index] = self.previous_meta
 
         not_replaced_index = 0 if replace_index != 0 else 1
-        self.previous_image = images[not_replaced_index]
-        self.previous_annotations = all_anns[not_replaced_index]
-        self.previous_meta = metas[not_replaced_index]
+        self.previous_image = copy.deepcopy(images[not_replaced_index])
+        self.previous_annotations = copy.deepcopy(all_anns[not_replaced_index])
+        self.previous_meta = copy.deepcopy(metas[not_replaced_index])
         return images, all_anns, metas
