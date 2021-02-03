@@ -14,7 +14,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Sven Kreiss',
     author_email='me@svenkreiss.com',
-    url='https://github.com/svenkreiss/openpifpaf_tracker',
+    url='https://github.com/vita-epfl/openpifpaf_tracker',
 
     install_requires=[
         'matplotlib',
