@@ -17,7 +17,7 @@ class MultiTracking(openpifpaf.visualizer.Base):
         self.anns_trail = []
 
     def predicted(self, anns):
-        if not self.indices:
+        if not self.indices():
             return
 
         self.anns_trail.append(anns)
