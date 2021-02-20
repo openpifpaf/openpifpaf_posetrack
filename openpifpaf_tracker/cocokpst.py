@@ -142,7 +142,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             shuffle=(not openpifpaf.plugins.coco.CocoKp.debug
                      and openpifpaf.plugins.coco.CocoKp.augmentation),
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
-            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
+            num_workers=self.loader_workers,
             drop_last=True,
             collate_fn=collate.collate_tracking_images_targets_meta,
         )
@@ -161,7 +161,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             batch_size=self.batch_size // 2,
             shuffle=False,
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
-            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
+            num_workers=self.loader_workers,
             drop_last=True,
             collate_fn=collate.collate_tracking_images_targets_meta,
         )
@@ -196,7 +196,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             batch_size=self.batch_size,
             shuffle=False,
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
-            num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
+            num_workers=self.loader_workers,
             drop_last=False,
             collate_fn=openpifpaf.datasets.collate_images_anns_meta,
         )
