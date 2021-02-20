@@ -17,13 +17,13 @@ def cli():
 
     openpifpaf.plugin.register()
     openpifpaf.logger.cli(parser)
-    openpifpaf.network.cli(parser)
+    openpifpaf.network.Factory.cli(parser)
 
     parser.add_argument('-o', '--output', default=None)
     args = parser.parse_args()
 
     openpifpaf.logger.configure(args, LOG)
-    openpifpaf.network.configure(args)
+    openpifpaf.network.Factory.configure(args)
 
     assert args.checkpoint, 'have to specify a checkpoint as input'
     if args.output is None:
@@ -37,7 +37,7 @@ def cli():
 
 def main():
     args = cli()
-    model, _ = openpifpaf.network.factory_from_args(args)
+    model, _ = openpifpaf.network.Factory().factory()
     model.base_net = backbone.TBackbone(model.base_net)
     # model = openpifpaf.network.batchrenorm.BatchRenorm2d.convert_to(model)
 
