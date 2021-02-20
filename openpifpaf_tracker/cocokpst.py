@@ -138,7 +138,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         return torch.utils.data.DataLoader(
             train_data,
-            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size // 2,
+            batch_size=self.batch_size // 2,
             shuffle=(not openpifpaf.plugins.coco.CocoKp.debug
                      and openpifpaf.plugins.coco.CocoKp.augmentation),
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
@@ -158,7 +158,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         return torch.utils.data.DataLoader(
             val_data,
-            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size // 2,
+            batch_size=self.batch_size // 2,
             shuffle=False,
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
             num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
@@ -193,7 +193,7 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         return torch.utils.data.DataLoader(
             eval_data,
-            batch_size=openpifpaf.plugins.coco.CocoKp.batch_size,
+            batch_size=self.batch_size,
             shuffle=False,
             pin_memory=openpifpaf.plugins.coco.CocoKp.pin_memory,
             num_workers=openpifpaf.plugins.coco.CocoKp.loader_workers,
