@@ -94,7 +94,7 @@ class Posetrack(openpifpaf.metric.Base):
                 'image_file': image_meta['file_name'],
                 'category_id': 1,
                 'scores': [round(s, 2) for s in keypoints[:, 2].tolist()],
-                'score': max(0.01, round(ann.score(), 2)),
+                'score': max(0.01, round(ann.score, 2)),
             })
 
     def _write2018(self, output_dir, annotation_file, *, additional_data=None):
