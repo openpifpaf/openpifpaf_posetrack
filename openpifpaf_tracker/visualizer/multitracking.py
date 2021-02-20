@@ -31,10 +31,9 @@ class MultiTracking(openpifpaf.visualizer.Base):
                 frame_anns = [ann for ann in frame_anns if ann.id_ in current_ids]
 
                 # only show trails for poses that have confidence > 0.01
-                frame_anns = [ann for ann in frame_anns if ann.score() > 0.01]
+                frame_anns = [ann for ann in frame_anns if ann.score > 0.01]
 
                 alpha = 0.5**(len(self.anns_trail) - 1 - frame_i)
                 if self._image_meta is not None:
-                    frame_anns = openpifpaf.transforms.Preprocess.annotations_inverse(
-                        frame_anns, self._image_meta)
+                    frame_anns = [ann.inverse_transform(self._image_meta) for ann in frame_anns]
                 self.annotation_painter.annotations(ax, frame_anns, alpha=alpha)
