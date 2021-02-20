@@ -41,7 +41,7 @@ class TrackAnnotation:
         pose.score_weights[-2:] = 0.0  # ears are not annotated
         pose.score_weights /= np.sum(pose.score_weights)
 
-        return pose.score()
+        return pose.score
 
     def score(self, frame_number, current_importance=1.0):
         """Reduce current importance to rank tracks that are still processing
