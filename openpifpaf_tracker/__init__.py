@@ -5,6 +5,7 @@ from .backbone import TBackbone
 from .cocokpst import CocoKpSt
 from .crowdpose import CrowdPose
 from .posetrack2018 import Posetrack2018
+from .posetrack2017 import Posetrack2017
 from .signal import Signal
 
 from ._version import get_versions
@@ -53,6 +54,7 @@ def register():
 
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
+    openpifpaf.DATAMODULES['posetrack2017'] = Posetrack2017
     openpifpaf.DATAMODULES['cocokpst'] = CocoKpSt
 
     # TODO resolve conflicting names: TBase TBackbone
