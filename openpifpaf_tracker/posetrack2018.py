@@ -177,17 +177,21 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
 
     @classmethod
     def cli(cls, parser: argparse.ArgumentParser):
-        group = parser.add_argument_group('data module Posetrack2018')
+        group2018 = parser.add_argument_group('data module Posetrack2018')
+        group2018.add_argument('--posetrack2018-train-annotations',
+                               default=cls.train_annotations,
+                               help='train annotations')
+        group2018.add_argument('--posetrack2018-val-annotations',
+                               default=cls.val_annotations,
+                               help='val annotations')
+        group2018.add_argument('--posetrack2018-eval-annotations',
+                               default=cls.eval_annotations,
+                               help='eval annotations')
+        group2018.add_argument('--posetrack2018-data-root',
+                               default=cls.data_root,
+                               help='data root')
 
-        group.add_argument('--posetrack2018-train-annotations',
-                           default=cls.train_annotations)
-        group.add_argument('--posetrack2018-val-annotations',
-                           default=cls.val_annotations)
-        group.add_argument('--posetrack2018-eval-annotations',
-                           default=cls.eval_annotations)
-        group.add_argument('--posetrack2018-data-root',
-                           default=cls.data_root)
-
+        group = parser.add_argument_group('data module Posetrack')
         group.add_argument('--posetrack-square-edge',
                            default=cls.square_edge, type=int,
                            help='square edge of input images')
@@ -229,6 +233,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         cls.eval_annotations = args.posetrack2018_eval_annotations
         cls.data_root = args.posetrack2018_data_root
 
+        # common posetrack
         cls.square_edge = args.posetrack_square_edge
         cls.augmentation = args.posetrack_augmentation
         cls.rescale_images = args.posetrack_rescale_images
@@ -254,36 +259,41 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         if not self.ablation_without_tcaf:
             encoders.append(encoder.Tcaf(self.head_metas[3], bmin=self.bmin))
 
-        if not self.augmentation:
-            return openpifpaf.transforms.Compose([
+        return openpifpaf.transforms.Compose([
+            *self.common_preprocess(),
+            transforms.Encoders(encoders),
+        ])
+
+    @classmethod
+    def common_preprocess(cls):
+        if not cls.augmentation:
+            return [
                 openpifpaf.transforms.NormalizeAnnotations(),
-                openpifpaf.transforms.RescaleAbsolute(self.square_edge),
-                openpifpaf.transforms.CenterPad(self.square_edge),
+                openpifpaf.transforms.RescaleAbsolute(cls.square_edge),
+                openpifpaf.transforms.CenterPad(cls.square_edge),
                 openpifpaf.transforms.EVAL_TRANSFORM,
-                transforms.Encoders(encoders),
-            ])
+            ]
 
         sample_pairing_t = None
-        if self.sample_pairing:
+        if cls.sample_pairing:
             sample_pairing_t = transforms.SamplePairing()
 
         hflip_posetrack = openpifpaf.transforms.HFlip(
             KEYPOINTS,
             openpifpaf.plugins.coco.constants.HFLIP)
-        return openpifpaf.transforms.Compose([
+        return [
             S(transforms.NormalizePosetrack()),
             openpifpaf.transforms.RandomApply(transforms.RandomizeOneFrame(), 0.2),
             S(transforms.AddCrowdForIncompleteHead()),
             S(openpifpaf.transforms.RandomApply(hflip_posetrack, 0.5)),
             S(openpifpaf.transforms.RescaleRelative(
                 (0.5, 2.0), power_law=True, absolute_reference=801, stretch_range=(0.75, 1.33))),
-            transforms.Crop(self.square_edge, max_shift=30.0),
-            transforms.Pad(self.square_edge, max_shift=30.0),
+            transforms.Crop(cls.square_edge, max_shift=30.0),
+            transforms.Pad(cls.square_edge, max_shift=30.0),
             sample_pairing_t,
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.RotateBy90(), 0.5)),
             S(openpifpaf.transforms.TRAIN_TRANSFORM),
-            transforms.Encoders(encoders),
-        ])
+        ]
 
     def train_loader(self):
         train_data = datasets.Posetrack2018(
