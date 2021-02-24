@@ -27,24 +27,24 @@ class Posetrack2017(openpifpaf.datasets.DataModule):
     def __init__(self):
         super().__init__()
 
-        cif = headmeta.TBaseCif('cif', 'posetrack2017',
+        cif = headmeta.TBaseCif('cif', 'posetrack2018',
                                 keypoints=KEYPOINTS,
                                 sigmas=SIGMAS,
                                 pose=UPRIGHT_POSE,
                                 draw_skeleton=SKELETON)
-        caf = headmeta.TBaseCaf('caf', 'posetrack2017',
+        caf = headmeta.TBaseCaf('caf', 'posetrack2018',
                                 keypoints=KEYPOINTS,
                                 sigmas=SIGMAS,
                                 pose=UPRIGHT_POSE,
                                 skeleton=SKELETON)
-        dcaf = headmeta.TBaseCaf('dcaf', 'posetrack2017',
+        dcaf = headmeta.TBaseCaf('dcaf', 'posetrack2018',
                                  keypoints=KEYPOINTS,
                                  sigmas=SIGMAS,
                                  pose=UPRIGHT_POSE,
                                  skeleton=DENSER_CONNECTIONS,
                                  sparse_skeleton=SKELETON,
                                  only_in_field_of_view=True)
-        tcaf = headmeta.Tcaf('tcaf', 'posetrack2017',
+        tcaf = headmeta.Tcaf('tcaf', 'posetrack2018',
                              keypoints=KEYPOINTS,
                              sigmas=SIGMAS,
                              pose=UPRIGHT_POSE,
@@ -64,12 +64,12 @@ class Posetrack2017(openpifpaf.datasets.DataModule):
     def cli(cls, parser: argparse.ArgumentParser):
         group = parser.add_argument_group('data module Posetrack2017')
 
-        group.add_argument('--posetrack2017-train-annotations',
-                           default=cls.train_annotations,
-                           help='train annotations')
-        group.add_argument('--posetrack2017-val-annotations',
-                           default=cls.val_annotations,
-                           help='val annotations')
+        # group.add_argument('--posetrack2017-train-annotations',
+        #                    default=cls.train_annotations,
+        #                    help='train annotations')
+        # group.add_argument('--posetrack2017-val-annotations',
+        #                    default=cls.val_annotations,
+        #                    help='val annotations')
         group.add_argument('--posetrack2017-eval-annotations',
                            default=cls.eval_annotations,
                            help='eval annotations')
@@ -84,61 +84,61 @@ class Posetrack2017(openpifpaf.datasets.DataModule):
         cls.pin_memory = args.pin_memory
 
         # posetrack2017 specific
-        cls.train_annotations = args.posetrack2017_train_annotations
-        cls.val_annotations = args.posetrack2017_val_annotations
+        # cls.train_annotations = args.posetrack2017_train_annotations
+        # cls.val_annotations = args.posetrack2017_val_annotations
         cls.eval_annotations = args.posetrack2017_eval_annotations
         cls.data_root = args.posetrack2017_data_root
 
-    def _preprocess(self):
-        encoders = [
-            encoder.SingleImage(openpifpaf.encoder.Cif(
-                self.head_metas[0], bmin=Posetrack2018.bmin)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(
-                self.head_metas[1], bmin=Posetrack2018.bmin)),
-            encoder.SingleImage(openpifpaf.encoder.Caf(
-                self.head_metas[2], bmin=Posetrack2018.bmin)),
-        ]
-        if not Posetrack2018.ablation_without_tcaf:
-            encoders.append(encoder.Tcaf(self.head_metas[3], bmin=Posetrack2018.bmin))
+    # def _preprocess(self):
+    #     encoders = [
+    #         encoder.SingleImage(openpifpaf.encoder.Cif(
+    #             self.head_metas[0], bmin=Posetrack2018.bmin)),
+    #         encoder.SingleImage(openpifpaf.encoder.Caf(
+    #             self.head_metas[1], bmin=Posetrack2018.bmin)),
+    #         encoder.SingleImage(openpifpaf.encoder.Caf(
+    #             self.head_metas[2], bmin=Posetrack2018.bmin)),
+    #     ]
+    #     if not Posetrack2018.ablation_without_tcaf:
+    #         encoders.append(encoder.Tcaf(self.head_metas[3], bmin=Posetrack2018.bmin))
 
-        return openpifpaf.transforms.Compose([
-            *Posetrack2018.common_preprocess(),
-            transforms.Encoders(encoders),
-        ])
+    #     return openpifpaf.transforms.Compose([
+    #         *Posetrack2018.common_preprocess(),
+    #         transforms.Encoders(encoders),
+    #     ])
 
-    def train_loader(self):
-        train_data = datasets.Posetrack2017(
-            annotation_files=self.train_annotations,
-            data_root=self.data_root,
-            group=[(0, -12), (0, -8), (0, -4)],
-            preprocess=self._preprocess(),
-            only_annotated=True,
-        )
+    # def train_loader(self):
+    #     train_data = datasets.Posetrack2017(
+    #         annotation_files=self.train_annotations,
+    #         data_root=self.data_root,
+    #         group=[(0, -12), (0, -8), (0, -4)],
+    #         preprocess=self._preprocess(),
+    #         only_annotated=True,
+    #     )
 
-        # to keep base-net batch size equal across batches, train tracking with
-        # half the batch-size of single-image datasets
-        assert self.batch_size % 2 == 0
-        return torch.utils.data.DataLoader(
-            train_data, batch_size=self.batch_size // 2, shuffle=not self.debug,
-            pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=True,
-            collate_fn=collate.collate_tracking_images_targets_meta)
+    #     # to keep base-net batch size equal across batches, train tracking with
+    #     # half the batch-size of single-image datasets
+    #     assert self.batch_size % 2 == 0
+    #     return torch.utils.data.DataLoader(
+    #         train_data, batch_size=self.batch_size // 2, shuffle=not self.debug,
+    #         pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=True,
+    #         collate_fn=collate.collate_tracking_images_targets_meta)
 
-    def val_loader(self):
-        val_data = datasets.Posetrack2017(
-            annotation_files=self.val_annotations,
-            data_root=self.data_root,
-            group=[(0, -12), (0, -8), (0, -4)],
-            preprocess=self._preprocess(),
-            only_annotated=True,
-        )
+    # def val_loader(self):
+    #     val_data = datasets.Posetrack2017(
+    #         annotation_files=self.val_annotations,
+    #         data_root=self.data_root,
+    #         group=[(0, -12), (0, -8), (0, -4)],
+    #         preprocess=self._preprocess(),
+    #         only_annotated=True,
+    #     )
 
-        # to keep base-net batch size equal across batches, train tracking with
-        # half the batch-size of single-image datasets
-        assert self.batch_size % 2 == 0
-        return torch.utils.data.DataLoader(
-            val_data, batch_size=self.batch_size // 2, shuffle=not self.debug,
-            pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=True,
-            collate_fn=collate.collate_tracking_images_targets_meta)
+    #     # to keep base-net batch size equal across batches, train tracking with
+    #     # half the batch-size of single-image datasets
+    #     assert self.batch_size % 2 == 0
+    #     return torch.utils.data.DataLoader(
+    #         val_data, batch_size=self.batch_size // 2, shuffle=not self.debug,
+    #         pin_memory=self.pin_memory, num_workers=self.loader_workers, drop_last=True,
+    #         collate_fn=collate.collate_tracking_images_targets_meta)
 
     def _eval_preprocess(self):
         return openpifpaf.transforms.Compose([
