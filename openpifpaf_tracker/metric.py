@@ -9,51 +9,9 @@ import subprocess
 import numpy as np
 import openpifpaf
 
+from .constants import POSETRACK_INDEX2017TO2018
+
 LOG = logging.getLogger(__name__)
-
-
-POSETRACK_PERSON_KEYPOINTS = [
-    'nose',
-    'head_bottom',
-    'head_top',
-    'left_ear',
-    'right_ear',
-    'left_shoulder',
-    'right_shoulder',
-    'left_elbow',
-    'right_elbow',
-    'left_wrist',
-    'right_wrist',
-    'left_hip',
-    'right_hip',
-    'left_knee',
-    'right_knee',
-    'left_ankle',
-    'right_ankle',
-]
-
-POSETRACK2017_PERSON_KEYPOINTS = [
-    'right_ankle',
-    'right_knee',
-    'right_hip',
-    'left_hip',
-    'left_knee',
-    'left_ankle',
-    'right_wrist',
-    'right_elbow',
-    'right_shoulder',
-    'left_shoulder',
-    'left_elbow',
-    'left_wrist',
-    'head_bottom',
-    'nose',
-    'head_top',
-]
-
-POSETRACK_INDEX2017TO2018 = [
-    POSETRACK_PERSON_KEYPOINTS.index(kp_name)
-    for kp_name in POSETRACK2017_PERSON_KEYPOINTS
-]
 
 
 class Posetrack(openpifpaf.metric.Base):
@@ -202,7 +160,8 @@ class Posetrack(openpifpaf.metric.Base):
     #         data_2017 = json.load(f)
     #     return [i['image'][0]['name'] for i in data_2017['annolist']]
 
-    def _format_2017(self, image_names, predictions):
+    @staticmethod
+    def _format_2017(image_names, predictions):
         r"""Create a datastructure that transforms to Posetrack2017 json.
 
         2017 target:

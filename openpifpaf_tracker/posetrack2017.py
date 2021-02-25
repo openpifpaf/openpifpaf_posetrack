@@ -4,16 +4,15 @@ import torch
 
 import openpifpaf
 
-from . import collate, datasets, encoder, headmeta, metric, transforms
+from . import datasets, headmeta, metric
+from .posetrack2018 import LoaderWithReset, Posetrack2018
 
-from .posetrack2018 import (
+from .constants import (
     KEYPOINTS,
     SIGMAS,
     UPRIGHT_POSE,
     SKELETON,
     DENSER_CONNECTIONS,
-    LoaderWithReset,
-    Posetrack2018,
 )
 
 

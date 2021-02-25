@@ -40,16 +40,16 @@ def tcaf_shared_preprocessing(model):
 
 def register():
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (
-        'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a5/'
-        'tshufflenetv2k16-201112-085543-posetrack2018-cocokpst-o50-f8d3e7d5.pkl'
+        'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
+        'v0.12a5/tshufflenetv2k16-201112-085543-posetrack2018-cocokpst-o50-f8d3e7d5.pkl'
     )
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k30'] = (
-        'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a5/'
-        'tshufflenetv2k30-201115-090131-posetrack2018-cocokpst-o50-934fdc1c.pkl'
+        'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
+        'v0.12.2/tshufflenetv2k30-210222-112623-posetrack2018-cocokpst-o10-123ec670.pkl'
     )
     openpifpaf.CHECKPOINT_URLS['resnet50-crowdpose'] = (
-        'https://github.com/vita-epfl/openpifpaf-torchhub/releases/download/v0.12a7/'
-        'resnet50-201005-100758-crowdpose-d978a89f.pkl'
+        'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
+        'v0.12a7/resnet50-201005-100758-crowdpose-d978a89f.pkl'
     )
 
     openpifpaf.DATAMODULES['crowdpose'] = CrowdPose

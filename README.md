@@ -75,12 +75,23 @@ CUDA_VISIBLE_DEVICES=3 python -m openpifpaf.eval \
 The training script supports ``--train-annotations`` and ``--val-annotations``
 to restrict the used annotation files. This is useful for local testing.
 
-To produce submissions to the test server:
+To produce submissions to the 2018 test server:
 
 ```sh
 CUDA_VISIBLE_DEVICES=0 python -m openpifpaf.eval \
   --checkpoint outputs/tshufflenetv2k30-210222-112623-posetrack2018-cocokpst-o10-123ec670.pkl \
   --dataset=posetrack2018 --posetrack2018-eval-annotations="data-posetrack2018/annotations/test/*.json" \
+  --loader-workers=8 \
+  --decoder=trackingpose:0 \
+  --write-predictions
+```
+
+For the 2017 test server:
+
+```sh
+CUDA_VISIBLE_DEVICES=1 python -m openpifpaf.eval \
+  --checkpoint outputs/tshufflenetv2k30-210222-112623-posetrack2018-cocokpst-o10-123ec670.pkl \
+  --dataset=posetrack2017 --posetrack2017-eval-annotations="data-posetrack2017/annotations/test/*.json" \
   --loader-workers=8 \
   --decoder=trackingpose:0 \
   --write-predictions

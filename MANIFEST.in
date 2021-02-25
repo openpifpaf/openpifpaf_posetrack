@@ -1,2 +1,3 @@
 include versioneer.py
 include openpifpaf_tracker/_version.py
+include LICENSE

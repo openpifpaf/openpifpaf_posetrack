@@ -8,25 +8,20 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    license='GNU AGPLv3',
+    license='MIT',
     description='OpenPifPaf Tracker',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     author='Sven Kreiss',
-    author_email='me@svenkreiss.com',
+    author_email='research@svenkreiss.com',
     url='https://github.com/vita-epfl/openpifpaf_tracker',
 
     install_requires=[
-        'matplotlib',
-        'pysparkling',  # for log analysis
-        'python-json-logger',
-        'openpifpaf>=0.9',
-        'scipy',
-        'torch>=1.0.0',
-        'torchvision',
+        'openpifpaf>=0.12.1',
     ],
     extras_require={
         'test': [
+            'pycodestyle',
             'pylint',
             'pytest',
         ],

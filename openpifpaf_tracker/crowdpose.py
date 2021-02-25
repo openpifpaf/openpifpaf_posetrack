@@ -38,7 +38,9 @@ SKELETON = [
     [7, 9], [9, 11],  # left leg
     [8, 10], [10, 12],  # right leg
 ]
-# sigmas: https://github.com/Jeff-sjtu/CrowdPose/blob/master/crowdpose-api/PythonAPI/crowdposetools/cocoeval.py#L223
+# sigmas:
+# https://github.com/Jeff-sjtu/CrowdPose/blob/master/
+# crowdpose-api/PythonAPI/crowdposetools/cocoeval.py#L223
 SIGMAS = [
     0.079,  # shoulders
     0.079,  # shoulders
