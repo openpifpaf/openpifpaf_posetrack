@@ -7,17 +7,6 @@ pip install 'openpifpaf_tracker[test,train]'
 pip install --editable '.[test,train]'
 ```
 
-# CrowdPose Data
-
-```sh
-mkdir data-crowdpose
-cd data-crowdpose
-# download links here: https://github.com/Jeff-sjtu/CrowdPose
-unzip annotations.zip
-unzip images.zip
-```
-
-
 # Posetrack
 
 Data. Follow the Posetrack instructions to download and untar the images.
