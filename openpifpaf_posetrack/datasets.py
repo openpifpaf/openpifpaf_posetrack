@@ -19,6 +19,8 @@ class Posetrack2018(torch.utils.data.Dataset):
                  only_annotated=False,
                  max_per_sequence=None,
                  n_image_stack=1):
+        super().__init__()
+
         if group is None:
             group = (0,)
         self.group = group
@@ -125,6 +127,8 @@ class Posetrack2017(torch.utils.data.Dataset):
                  only_annotated=False,
                  max_per_sequence=None,
                  n_image_stack=1):
+        super().__init__()
+
         if group is None:
             group = (0,)
         self.group = group
