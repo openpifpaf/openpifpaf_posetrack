@@ -31,5 +31,8 @@ setup(
         'train': [
             'motmetrics',
         ],
+        'video': [
+            'opencv-python',
+        ],
     },
 )
