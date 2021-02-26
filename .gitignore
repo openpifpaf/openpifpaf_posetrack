@@ -9,6 +9,10 @@ docs-private/
 shared/
 all-images*/
 docs/coco/*predictions*
+docs/skeleton_posetrack.png
+docs/skeleton_tracking.png
+docs/skeleton_tracking_forward.png
+docs/coco_skeleton_forward.png
 
 # Python
 .ipynb_checkpoints/
