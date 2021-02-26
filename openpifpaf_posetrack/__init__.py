@@ -38,6 +38,10 @@ def tcaf_shared_preprocessing(model):
 
 
 def register():
+    # TODO for backwards compatibility (remove once all models were created with openpifpaf_posetrack)
+    import imp
+    imp.load_package('openpifpaf_tracker', 'openpifpaf_posetrack')
+
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (
         'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
         'v0.12a5/tshufflenetv2k16-201112-085543-posetrack2018-cocokpst-o50-f8d3e7d5.pkl'

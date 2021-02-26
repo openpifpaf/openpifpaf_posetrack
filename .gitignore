@@ -8,6 +8,7 @@ outputs/
 docs-private/
 shared/
 all-images*/
+docs/coco/*predictions*
 
 # Python
 .ipynb_checkpoints/
