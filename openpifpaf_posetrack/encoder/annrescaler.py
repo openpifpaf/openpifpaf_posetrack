@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
-    def bg_mask(self, anns1, anns2, width_height):
+    def bg_mask(self, anns1, anns2, width_height):  # pylint: disable=arguments-differ
         """Create background mask taking crowd annotations into account."""
         mask = np.ones((
             (width_height[1] - 1) // self.stride + 1,

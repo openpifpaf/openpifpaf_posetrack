@@ -63,7 +63,7 @@ class Posetrack(openpifpaf.metric.Base):
             ],
         }
 
-    def accumulate(self, predictions, image_meta, *, ground_truth=None):
+    def accumulate(self, predictions, image_meta, *, ground_truth=None):  # pylint: disable=unused-argument
         annotation_file = image_meta['annotation_file']
 
         # make sure an entry for this annotation file is created

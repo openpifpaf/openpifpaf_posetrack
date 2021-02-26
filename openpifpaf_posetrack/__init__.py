@@ -38,8 +38,9 @@ def tcaf_shared_preprocessing(model):
 
 
 def register():
-    # TODO for backwards compatibility (remove once all models were created with openpifpaf_posetrack)
-    import imp
+    # TODO for backwards compatibility
+    # TODO (remove once all models were created with openpifpaf_posetrack)
+    import imp  # pylint: disable=import-outside-toplevel
     imp.load_package('openpifpaf_tracker', 'openpifpaf_posetrack')
 
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (

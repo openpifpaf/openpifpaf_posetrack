@@ -38,7 +38,7 @@ class Oks:
         area = (pose[:, 0].max() - pose[:, 0].min()) * (pose[:, 1].max() - pose[:, 1].min())
         return np.sqrt(area)
 
-    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):
+    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):  # pylint: disable=unused-argument
         last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0

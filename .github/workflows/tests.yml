@@ -63,6 +63,7 @@ jobs:
         python -m pip freeze
         python --version
         python -c "import openpifpaf; print(openpifpaf.__version__)"
+        python -c "import openpifpaf_posetrack; print(openpifpaf_posetrack.__version__)"
     - run: pylint openpifpaf_posetrack --disable=fixme
     - name: Lint tests
       if: matrix.os != 'windows-latest'  # because of path separator

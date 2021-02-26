@@ -143,6 +143,7 @@ class TrackingPose(TrackBase):
             LOG.debug('Occupied fields after NMS')
             self.pose_generator.occupancy_visualizer.predicted(occupied)
 
+    # pylint: disable=too-many-statements
     def __call__(self, fields, *, initial_annotations=None):
         self.frame_number += 1
 

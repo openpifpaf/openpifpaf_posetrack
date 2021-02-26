@@ -20,7 +20,7 @@ class Euclidean:
             for track_frame in self.track_frames
         )
 
-    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):
+    def distance(self, frame_number, pose, track, track_is_good, track_frame=-1):  # pylint: disable=unused-argument
         last_track_frame = track.frame_pose[-1][0]
         skipped_frames = frame_number - last_track_frame - 1
         assert skipped_frames >= 0
