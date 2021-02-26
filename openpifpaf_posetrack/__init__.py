@@ -3,7 +3,6 @@ import openpifpaf
 from . import decoder, headmeta, heads
 from .backbone import TBackbone
 from .cocokpst import CocoKpSt
-from .crowdpose import CrowdPose
 from .posetrack2018 import Posetrack2018
 from .posetrack2017 import Posetrack2017
 from .signal import Signal

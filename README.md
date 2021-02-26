@@ -46,6 +46,12 @@ This takes a long time. It is faster on the test set:
 octave --no-gui --eval "addpath('./external/jsonlab'); mat2json('your_relative_path/data-posetrack2017/annotations/test/'); quit"
 ```
 
+The Posetrack poses look like these:
+
+![poses](docs/skeleton_overview.png)
+
+Created with `python -m openpifpaf_posetrack.draw_poses`.
+
 
 # Train posetrack2018-cocokpst
 
@@ -97,11 +103,3 @@ CUDA_VISIBLE_DEVICES=1 python -m openpifpaf.eval \
   --write-predictions
 ```
 
-
-# Person Skeletons
-
-The Posetrack skeleton used here:
-
-<img src="docs/skeleton_posetrack.png" height=250 alt="Posetrack skeleton" />
-
-Created with ``python -m openpifpaf.data``.
