@@ -23,8 +23,8 @@ class ScaleMix(openpifpaf.transforms.Preprocess):
         scales = np.array([
             np.sqrt(ann['bbox'][2] * ann['bbox'][3])
             for anns in all_anns
-            for ann in anns if (not getattr(ann, 'iscrowd', False) and
-                                np.any(ann['keypoints'][:, 2] > 0.0))
+            for ann in anns if (not getattr(ann, 'iscrowd', False)
+                                and np.any(ann['keypoints'][:, 2] > 0.0))
         ])
         LOG.debug('scale threshold = %f, scales = %s', self.scale_threshold, scales)
         if not scales.shape[0]:

@@ -63,9 +63,9 @@ class Posetrack2018(torch.utils.data.Dataset):
         groups = []
         for i in range(0, len(all_images)):
             for this_group in frame_groups:
-                if any(i+gi < 0 for gi in this_group):
+                if any(i + gi < 0 for gi in this_group):
                     continue
-                image_groups = [all_images[i+gi] for gi in this_group]
+                image_groups = [all_images[i + gi] for gi in this_group]
                 groups.append([
                     {
                         'annotation_file': file_name,
@@ -115,7 +115,6 @@ class Posetrack2018(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.annotations)
-
 
 
 class Posetrack2017(torch.utils.data.Dataset):
@@ -183,9 +182,9 @@ class Posetrack2017(torch.utils.data.Dataset):
                     'annotation_file': file_name,
                     'image': {
                         'frame_id': (
-                            i+gi
-                            if i+gi >= 0
-                            else i-4 if i-4 >= 0 else i
+                            i + gi
+                            if i + gi >= 0
+                            else i - 4 if i - 4 >= 0 else i
                         ),
                     },
                 }
