@@ -47,12 +47,7 @@ def register():
         'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
         'v0.12.2/tshufflenetv2k30-210222-112623-posetrack2018-cocokpst-o10-123ec670.pkl'
     )
-    openpifpaf.CHECKPOINT_URLS['resnet50-crowdpose'] = (
-        'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
-        'v0.12a7/resnet50-201005-100758-crowdpose-d978a89f.pkl'
-    )
 
-    openpifpaf.DATAMODULES['crowdpose'] = CrowdPose
     openpifpaf.DATAMODULES['posetrack2018'] = Posetrack2018
     openpifpaf.DATAMODULES['posetrack2017'] = Posetrack2017
     openpifpaf.DATAMODULES['cocokpst'] = CocoKpSt
