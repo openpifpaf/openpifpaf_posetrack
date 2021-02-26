@@ -65,6 +65,7 @@ def test_predict_realistic_resolution(tmpdir):
     assert len(predictions) == 5
 
 
+@pytest.mark.slow
 @pytest.mark.skipif(sys.platform == 'win32', reason='does not run on windows')
 @pytest.mark.parametrize('with_debug', [False, True])
 def test_video(with_debug, tmpdir):
