@@ -1,3 +1,6 @@
+[![Tests](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml)
+
+
 # Install
 
 ```sh
