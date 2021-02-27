@@ -48,7 +48,7 @@ Created with `python -m openpifpaf_posetrack.draw_poses`.
 # 210226
 
 # first convert from single image to tracking model
-python3 -m openpifpaf_tracker.imagetotracking --checkpoint shufflenetv2k30
+python3 -m openpifpaf_posetrack.imagetotracking --checkpoint shufflenetv2k30
 
 # train
 time python3 -m torch.distributed.launch --nproc_per_node=4 \
