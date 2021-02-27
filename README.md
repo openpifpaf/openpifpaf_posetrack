@@ -45,17 +45,22 @@ Created with `python -m openpifpaf_posetrack.draw_poses`.
 # Train posetrack2018-cocokpst
 
 ```sh
-# 201218
+# 210226
+
+# first convert from single image to tracking model
 python3 -m openpifpaf_tracker.imagetotracking --checkpoint shufflenetv2k30
-time CUDA_VISIBLE_DEVICES=0,1 python3 -m openpifpaf.train \
+
+# train
+time python3 -m torch.distributed.launch --nproc_per_node=4 \
+  -m openpifpaf.train --ddp \
   --lr=0.0003 --momentum=0.95 --b-scale=10.0 \
   --epochs=50 --lr-decay 40 45 --lr-decay-epochs=5 \
-  --batch-size=32 \
+  --batch-size=8 \
   --weight-decay=1e-5 \
   --dataset=posetrack2018-cocokpst --dataset-weights 1 1 --stride-apply=2 \
   --posetrack-upsample=2 \
   --cocokp-upsample=2 --cocokp-orientation-invariant=0.1 --cocokp-blur=0.1 \
-  --checkpoint outputs/tshufflenetv2k30-0.12b1-0.2.0.pkl
+  --checkpoint outputs/tshufflenetv2k30-210217-075056-cocokp-o10s-6f9daa84.pkl
 ```
 
 ```sh
