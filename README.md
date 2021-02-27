@@ -1,7 +1,7 @@
 # Install
 
 ```sh
-pip install 'openpifpaf_tracker[test,train]'
+pip install 'openpifpaf_posetrack[test,train]'
 
 # from source:
 pip install --editable '.[test,train]'
