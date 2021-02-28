@@ -7,12 +7,6 @@ LOG = logging.getLogger(__name__)
 
 
 class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
-    def __init__(self, stride, pose=None):
-        pose2 = None
-        if pose is not None:
-            pose2 = np.concatenate((pose, pose), axis=0)
-        super().__init__(stride, pose2)
-
     def bg_mask(self, anns, width_height, *, crowd_margin):
         """Create background mask taking crowd annotations into account."""
         anns1, anns2 = anns

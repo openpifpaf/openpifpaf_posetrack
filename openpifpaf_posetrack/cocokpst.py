@@ -54,10 +54,10 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
         )
         tcaf = headmeta.Tcaf(
             'tcaf', 'cocokpst',
-            keypoints=COCO_KEYPOINTS,
-            sigmas=COCO_PERSON_SIGMAS,
-            pose=COCO_UPRIGHT_POSE,
-            draw_skeleton=COCO_PERSON_SKELETON,
+            keypoints_single_frame=COCO_KEYPOINTS,
+            sigmas_single_frame=COCO_PERSON_SIGMAS,
+            pose_single_frame=COCO_UPRIGHT_POSE,
+            draw_skeleton_single_frame=COCO_PERSON_SKELETON,
             only_in_field_of_view=True,
         )
 

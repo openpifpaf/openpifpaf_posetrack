@@ -34,7 +34,7 @@ class Tcaf:
 
         if self.fill_plan is None:
             self.fill_plan = [
-                (caf_i, joint1i - 1, joint2i - 1 + len(self.meta.keypoints))
+                (caf_i, joint1i - 1, joint2i - 1)
                 for caf_i, (joint1i, joint2i) in enumerate(self.meta.skeleton)
             ]
 
