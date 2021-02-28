@@ -40,7 +40,7 @@ def tcaf_shared_preprocessing(model):
 def register():
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k16'] = (
         'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
-        'v0.12a5/tshufflenetv2k16-201112-085543-posetrack2018-cocokpst-o50-f8d3e7d5.pkl'
+        'v0.12.2/tshufflenetv2k16-210227-103135-posetrack2018-cocokpst-o10-1ab1546c.pkl'
     )
     openpifpaf.CHECKPOINT_URLS['tshufflenetv2k30'] = (
         'http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
