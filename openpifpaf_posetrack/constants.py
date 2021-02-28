@@ -60,7 +60,6 @@ UPRIGHT_POSE = np.array([
     [-1.4, 0.0, 2.0],  # 'left_ankle',      # 16
     [1.4, 0.1, 2.0],  # 'right_ankle',     # 17
 ])
-UPRIGHT_POSE2 = np.concatenate((UPRIGHT_POSE, UPRIGHT_POSE), axis=0)
 
 SKELETON = [
     [16, 14],
