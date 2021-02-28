@@ -12,6 +12,7 @@ from .constants import (
     KEYPOINTS,
     SIGMAS,
     UPRIGHT_POSE,
+    UPRIGHT_POSE2,
     SKELETON,
     DENSER_CONNECTIONS,
 )
@@ -61,7 +62,7 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
         tcaf = headmeta.Tcaf('tcaf', 'posetrack2018',
                              keypoints=KEYPOINTS,
                              sigmas=SIGMAS,
-                             pose=UPRIGHT_POSE,
+                             pose=UPRIGHT_POSE2,
                              draw_skeleton=SKELETON,
                              only_in_field_of_view=True)
 
