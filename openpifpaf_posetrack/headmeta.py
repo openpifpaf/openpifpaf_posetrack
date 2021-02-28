@@ -63,4 +63,4 @@ class Tcaf(openpifpaf.headmeta.Base):
 
     @property
     def n_fields(self):
-        return len(self.keypoints)
+        return len(self.keypoints_single_frame)
