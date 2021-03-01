@@ -7,8 +7,10 @@ LOG = logging.getLogger(__name__)
 
 
 class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
-    def bg_mask(self, anns1, anns2, width_height):  # pylint: disable=arguments-differ
+    def bg_mask(self, anns, width_height, *, crowd_margin):
         """Create background mask taking crowd annotations into account."""
+        anns1, anns2 = anns
+
         mask = np.ones((
             (width_height[1] - 1) // self.stride + 1,
             (width_height[0] - 1) // self.stride + 1,
@@ -24,10 +26,19 @@ class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
                 bb = ann['bbox'].copy()
                 bb /= self.stride
                 bb[2:] += bb[:2]  # convert width and height to x2 and y2
-                left = np.clip(int(bb[0]), 0, mask.shape[1] - 1)
-                top = np.clip(int(bb[1]), 0, mask.shape[0] - 1)
-                right = np.clip(int(np.ceil(bb[2])) + 1, left + 1, mask.shape[1])
-                bottom = np.clip(int(np.ceil(bb[3])) + 1, top + 1, mask.shape[0])
+
+                # left top
+                left = np.clip(int(bb[0] - crowd_margin), 0, mask.shape[1] - 1)
+                top = np.clip(int(bb[1] - crowd_margin), 0, mask.shape[0] - 1)
+
+                # right bottom
+                # ceil: to round up
+                # +1: because mask upper limit is exclusive
+                right = np.clip(int(np.ceil(bb[2] + crowd_margin)) + 1,
+                                left + 1, mask.shape[1])
+                bottom = np.clip(int(np.ceil(bb[3] + crowd_margin)) + 1,
+                                 top + 1, mask.shape[0])
+
                 crowd_bbox[0] = min(crowd_bbox[0], left)
                 crowd_bbox[1] = min(crowd_bbox[1], top)
                 crowd_bbox[2] = max(crowd_bbox[2], right)
@@ -43,11 +54,16 @@ class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
 
         return mask
 
-    def keypoint_sets(self, anns1, anns2):  # pylint: disable=arguments-differ
+    def keypoint_sets(self, anns):
         """Ignore annotations of crowds."""
+        anns1, anns2 = anns
+
         anns1_by_trackid = {ann['track_id']: ann for ann in anns1}
         keypoint_sets = [
-            np.stack((anns1_by_trackid[ann2['track_id']]['keypoints'], ann2['keypoints']))
+            np.concatenate((
+                anns1_by_trackid[ann2['track_id']]['keypoints'],
+                ann2['keypoints'],
+            ), axis=0)
             for ann2 in anns2
             if (not ann2['iscrowd']
                 and ann2['track_id'] in anns1_by_trackid)
@@ -56,5 +72,5 @@ class TrackingAnnRescaler(openpifpaf.encoder.annrescaler.AnnRescaler):
             return []
 
         for keypoints in keypoint_sets:
-            keypoints[:, :, :2] /= self.stride
+            keypoints[:, :2] /= self.stride
         return keypoint_sets

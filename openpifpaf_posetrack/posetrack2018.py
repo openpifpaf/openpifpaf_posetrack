@@ -59,10 +59,10 @@ class Posetrack2018(openpifpaf.datasets.DataModule):
                                  sparse_skeleton=SKELETON,
                                  only_in_field_of_view=True)
         tcaf = headmeta.Tcaf('tcaf', 'posetrack2018',
-                             keypoints=KEYPOINTS,
-                             sigmas=SIGMAS,
-                             pose=UPRIGHT_POSE,
-                             draw_skeleton=SKELETON,
+                             keypoints_single_frame=KEYPOINTS,
+                             sigmas_single_frame=SIGMAS,
+                             pose_single_frame=UPRIGHT_POSE,
+                             draw_skeleton_single_frame=SKELETON,
                              only_in_field_of_view=True)
 
         cif.upsample_stride = self.upsample_stride
