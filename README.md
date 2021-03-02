@@ -10,7 +10,22 @@ pip install 'openpifpaf_posetrack[test,train]'
 pip install --editable '.[test,train]'
 ```
 
-# Posetrack
+
+# Prediction
+
+The standard `openpifpaf.video` still works exactly the same way. With this
+plugin installed, you can use `--checkpoint=tshufflenetv2k16` (with a `t` at the
+beginning). This model can be decoded in multiple ways and you should pick one
+decoder. To get started, we recommend `--decoder=trackingpose:0`.
+Putting it all together, an example command to process a video stream from a
+camera is:
+
+```sh
+MPLBACKEND=macosx python3 -m openpifpaf.video --show --long-edge=321 --checkpoint=tshufflenetv2k16 --decoder=trackingpose:0 --source 0 --horizontal-flip
+```
+
+
+# Posetrack Dataset
 
 Data. Follow the Posetrack instructions to download and untar the images.
 Labels:
