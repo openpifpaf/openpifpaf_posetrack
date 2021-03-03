@@ -1,5 +1,7 @@
 [![Tests](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml)
 
+This is the tracking plugin for [OpenPifPaf](https://github.com/vita-epfl/openpifpaf).
+
 
 # Install
 
@@ -115,3 +117,17 @@ CUDA_VISIBLE_DEVICES=1 python -m openpifpaf.eval \
   --write-predictions
 ```
 
+
+## Citation
+
+```
+... TODO ...
+
+@InProceedings{kreiss2019pifpaf,
+  author = {Kreiss, Sven and Bertoni, Lorenzo and Alahi, Alexandre},
+  title = {{PifPaf: Composite Fields for Human Pose Estimation}},
+  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month = {June},
+  year = {2019}
+}
+```
