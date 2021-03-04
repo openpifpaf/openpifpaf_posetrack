@@ -122,7 +122,7 @@ CUDA_VISIBLE_DEVICES=1 python -m openpifpaf.eval \
 
 ```
 @article{kreiss2021openpifpaf,
-  title = {OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association},
+  title = {{OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association}},
   author = {Sven Kreiss and Lorenzo Bertoni and Alexandre Alahi},
   journal = {arXiv preprint arXiv:2103.02440},
   year = {2021},
