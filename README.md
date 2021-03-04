@@ -1,9 +1,10 @@
 [![Tests](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml)
 
 This is the tracking plugin for [OpenPifPaf](https://github.com/vita-epfl/openpifpaf).<br />
-Paper is ["OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association"](https://arxiv.org/abs/2103.02440).
+[__New__ 2021 paper](https://arxiv.org/abs/2103.02440):
 
-> OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association
+> __OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association__<br />
+> _[Sven Kreiss](https://www.svenkreiss.com), [Lorenzo Bertoni](https://scholar.google.com/citations?user=f-4YHeMAAAAJ&hl=en), [Alexandre Alahi](https://scholar.google.com/citations?user=UIhXQ64AAAAJ&hl=en)_, 2021.
 >
 > Many image-based perception tasks can be formulated as detecting, associating
 > and tracking semantic keypoints, e.g., human body pose estimation and tracking.
@@ -21,6 +22,8 @@ Paper is ["OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spat
 > that our method generalizes to any class of semantic keypoints such as car and
 > animal parts to provide a holistic perception framework that is well suited for
 > urban mobility such as self-driving cars and delivery robots.
+
+Previous [CVPR 2019 paper](http://openaccess.thecvf.com/content_CVPR_2019/html/Kreiss_PifPaf_Composite_Fields_for_Human_Pose_Estimation_CVPR_2019_paper.html).
 
 
 # Install
