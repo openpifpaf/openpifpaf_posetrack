@@ -1,6 +1,26 @@
 [![Tests](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml)
 
-This is the tracking plugin for [OpenPifPaf](https://github.com/vita-epfl/openpifpaf).
+This is the tracking plugin for [OpenPifPaf](https://github.com/vita-epfl/openpifpaf).<br />
+Paper is ["OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association"](https://arxiv.org/abs/2103.02440).
+
+> OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association
+>
+> Many image-based perception tasks can be formulated as detecting, associating
+> and tracking semantic keypoints, e.g., human body pose estimation and tracking.
+> In this work, we present a general framework that jointly detects and forms
+> spatio-temporal keypoint associations in a single stage, making this the first
+> real-time pose detection and tracking algorithm. We present a generic neural
+> network architecture that uses Composite Fields to detect and construct a
+> spatio-temporal pose which is a single, connected graph whose nodes are the
+> semantic keypoints (e.g., a person's body joints) in multiple frames. For the
+> temporal associations, we introduce the Temporal Composite Association Field
+> (TCAF) which requires an extended network architecture and training method
+> beyond previous Composite Fields. Our experiments show competitive accuracy
+> while being an order of magnitude faster on multiple publicly available datasets
+> such as COCO, CrowdPose and the PoseTrack 2017 and 2018 datasets. We also show
+> that our method generalizes to any class of semantic keypoints such as car and
+> animal parts to provide a holistic perception framework that is well suited for
+> urban mobility such as self-driving cars and delivery robots.
 
 
 # Install
@@ -125,8 +145,8 @@ CUDA_VISIBLE_DEVICES=1 python -m openpifpaf.eval \
   title = {{OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association}},
   author = {Sven Kreiss and Lorenzo Bertoni and Alexandre Alahi},
   journal = {arXiv preprint arXiv:2103.02440},
-  year = {2021},
-  month = {3}
+  month = {March},
+  year = {2021}
 }
 
 @InProceedings{kreiss2019pifpaf,
