@@ -32,6 +32,8 @@ class Tcaf(openpifpaf.headmeta.Base):
     n_vectors: ClassVar[int] = 2
     n_scales: ClassVar[int] = 2
 
+    training_weights: List[float] = None
+
     vector_offsets = [True, True]
 
     def __post_init__(self):
