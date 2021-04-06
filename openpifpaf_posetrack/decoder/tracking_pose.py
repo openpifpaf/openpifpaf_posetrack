@@ -16,6 +16,7 @@ class TrackingPose(TrackBase):
     cache_group = [0, -1]
     forward_tracking_pose = True
     track_recovery = False
+    single_seed = False
 
     def __init__(self, cif_meta, caf_meta, tcaf_meta, *, pose_generator=None):
         super().__init__()
@@ -75,10 +76,13 @@ class TrackingPose(TrackBase):
         group = parser.add_argument_group('trackingpose decoder')
         assert not cls.track_recovery
         group.add_argument('--trackingpose-track-recovery', default=False, action='store_true')
+        assert not cls.single_seed
+        group.add_argument('--trackingpose-single-seed', default=False, action='store_true')
 
     @classmethod
     def configure(cls, args: argparse.Namespace):
         cls.track_recovery = args.trackingpose_track_recovery
+        cls.single_seed = args.trackingpose_single_seed
 
     @classmethod
     def factory(cls, head_metas):
@@ -170,6 +174,11 @@ class TrackingPose(TrackBase):
                         self.n_keypoints * position_i:
                         self.n_keypoints * position_i + self.n_keypoints
                     ] = prev_pose.joint_scales
+
+                    if self.single_seed:
+                        inverse_mask = tracking_ann.data[:, 2] < np.amax(tracking_ann.data[:, 2])
+                        tracking_ann.data[inverse_mask] = 0.0
+                        tracking_ann.joint_scales[inverse_mask] = 0.0
 
             tracking_ann.data[tracking_ann.data[:, 2] < 0.05] = 0.0
             if not np.any(tracking_ann.data[:, 2] > 0.0):
