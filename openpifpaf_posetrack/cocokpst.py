@@ -114,11 +114,13 @@ class CocoKpSt(openpifpaf.datasets.DataModule):
             S(openpifpaf.transforms.RandomApply(
                 openpifpaf.transforms.HFlip(COCO_KEYPOINTS, HFLIP), 0.5)),
             S(rescale_t),
+            S(openpifpaf.transforms.RandomChoice(
+                [openpifpaf.transforms.RotateBy90(),
+                 openpifpaf.transforms.RotateUniform(30.0)],
+                [openpifpaf.plugins.coco.CocoKp.orientation_invariant, 0.4],
+            )),
             transforms.Crop(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
             transforms.Pad(openpifpaf.plugins.coco.CocoKp.square_edge, max_shift=30.0),
-            S(openpifpaf.transforms.RandomApply(
-                openpifpaf.transforms.RotateBy90(),
-                openpifpaf.plugins.coco.CocoKp.orientation_invariant)),
             S(openpifpaf.transforms.RandomApply(openpifpaf.transforms.Blur(),
                                                 openpifpaf.plugins.coco.CocoKp.blur / 2.0)),
             S(openpifpaf.transforms.RandomApply(transforms.HorizontalBlur(),

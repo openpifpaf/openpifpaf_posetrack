@@ -1,8 +1,8 @@
 import copy
 import logging
 
-import numpy as np
 import PIL
+import torch
 
 import openpifpaf
 
@@ -19,7 +19,7 @@ class CameraShift(openpifpaf.transforms.Preprocess):
         meta = copy.deepcopy(meta)
         anns = copy.deepcopy(anns)
 
-        xy_shift = (np.random.rand(2) - 0.5) * 2 * self.max_shift
+        xy_shift = (torch.rand(2).numpy() - 0.5) * 2 * self.max_shift
         xy_shift *= meta.get('group_i', 1.0)
 
         # shift image
