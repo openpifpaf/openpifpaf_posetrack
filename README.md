@@ -1,3 +1,5 @@
+# The code has been migrated directly into the main [OpenPifPaf](https://github.com/openpifpaf/openpifpaf) repository. The documentation hasn't been moved yet from this repo to the guide in OpenPifPaf so I am keeping this repository for now.
+
 [![Tests](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/vita-epfl/openpifpaf_posetrack/actions/workflows/tests.yml)
 
 This is the tracking plugin for [OpenPifPaf](https://github.com/vita-epfl/openpifpaf).<br />
